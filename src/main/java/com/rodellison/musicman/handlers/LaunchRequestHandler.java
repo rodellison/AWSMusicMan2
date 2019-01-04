@@ -34,10 +34,10 @@ public class LaunchRequestHandler implements RequestHandler {
                 "particular venue. Try asking a question similar to one of these:  " +
                 " Who is coming to Staples Center, or Where is Iron Maiden playing in July?";
 
-        String repromptSpeechText1 = "Please ask a question similar to one of these:";
-        String repromptSpeechText2 = "Who's coming to Staples Center, or Where is Iron Maiden playing?";
+        String repromptSpeechText1 = "<p>Please ask a question similar to one of these:</p>";
+        String repromptSpeechText2 = "Who's coming to Staples Center, or Where is Iron Maiden playing in July?";
 
-        String primaryTextDisplay = "Welcome to <b>The Music Man</b>.<br/>";
+        String primaryTextDisplay = "Welcome to <b>The Music Man</b>.<br/><br/>";
         String secondaryTextDisplay = repromptSpeechText1 + "<br/><br/>" + repromptSpeechText2;
 
         return TemplatesUtil.createResponse(input, speechText,

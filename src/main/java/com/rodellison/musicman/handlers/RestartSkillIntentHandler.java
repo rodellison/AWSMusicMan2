@@ -29,13 +29,13 @@ public class RestartSkillIntentHandler implements RequestHandler {
 
         log.warn("RestartSkillIntentHandler called");
 
-        String speechText = "OK. Try asking a question similar to one of these:  " +
+        String speechText = "<p>OK. Try asking a question similar to one of these:</p>" +
                 " Who is coming to Staples Center, or Where is Iron Maiden playing in July?";
 
-        String repromptSpeechText1 = "Please ask a question similar to one of these:";
-        String repromptSpeechText2 = "Who's coming to Staples Center, or Where is Iron Maiden playing?";
+        String repromptSpeechText1 = "<p>Please ask a question similar to one of these:</p>";
+        String repromptSpeechText2 = "Who's coming to Staples Center, or Where is Iron Maiden playing in July?";
 
-        String primaryTextDisplay = "Welcome to <b>The Music Man</b>.<br/>";
+        String primaryTextDisplay = "Welcome to <b>The Music Man</b>.<br/><br/>";
         String secondaryTextDisplay = repromptSpeechText1 + "<br/><br/>" + repromptSpeechText2;
 
         return TemplatesUtil.createResponse(input, speechText,

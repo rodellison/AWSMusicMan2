@@ -48,17 +48,6 @@ public class ArtistIntentHandler implements RequestHandler {
     @Override
     public Optional<Response> handle(HandlerInput input) {
 
-        //Establish the config session attributes if they aren't present
-//        Map<String, Object> attributes = input.getAttributesManager().getSessionAttributes();
-
-//        if (attributes.get("AppTitle") == null) {
-//            PropertiesUtil myProps = new PropertiesUtil();
-//            Set<Object> theConfigProperties = myProps.getAllKeys();
-//            for (Object thisPropKey : theConfigProperties) {
-//                attributes.put((String) thisPropKey, myProps.getPropertyValue((String) thisPropKey));
-//            }
-//            input.getAttributesManager().setSessionAttributes(attributes);
-//        }
 
         strAPIKey = myProps.getPropertyValue("apikey");
         DynamoDBTableName = myProps.getPropertyValue("DynamoDBTable");
@@ -120,13 +109,11 @@ public class ArtistIntentHandler implements RequestHandler {
                 String.format("<p>Here is where " + strOriginalArtistValue + " " + "are playing</p> ");
 
         primaryTextDisplay = strTheMonth != "" ? String.format("Upcoming dates for <b>%s</b> in <b>%s</b>:<br/>", strOriginalArtistValue, strTheMonth) :
-                String.format("Upcoming dates for <b>%s</b>:<br/>", strOriginalArtistValue);
+                String.format("Upcoming dates for <b>%s</b>:<br/><br/>", strOriginalArtistValue);
 
         return EventDataUtil.ProcessEventData(input, 0, speechText, primaryTextDisplay, events, INTENT_NAME, strTheArtist, strTheMonth);
 
     }
-
-
 
 
     /**

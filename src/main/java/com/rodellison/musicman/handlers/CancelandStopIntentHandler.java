@@ -28,14 +28,13 @@ public class CancelandStopIntentHandler implements RequestHandler {
 
         log.warn("CancelandStopIntentHandler called");
 
-        String speechText = "Thanks for using the Music Man. Goodbye.";
+        String speechText = "<p>Thanks for using the Music Man.</p> Goodbye.";
         speechText += "<audio src='soundbank://soundlibrary/musical/amzn_sfx_musical_drone_intro_02'/>";
-        String primaryTextDisplay = "Thanks for using <b>The Music Man</b>.<br/>";
-        String secondaryTextDisplay = "<br/><br/>" + "Goodbye!";
+        String primaryTextDisplay = "<br/>Goodbye!";
 
         return TemplatesUtil.createResponse(input, speechText,
                 "",
-                primaryTextDisplay, secondaryTextDisplay, INTENT_NAME);
+                primaryTextDisplay, "", INTENT_NAME);
 
     }
 }

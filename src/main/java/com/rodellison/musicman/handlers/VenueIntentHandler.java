@@ -117,7 +117,7 @@ public class VenueIntentHandler implements RequestHandler {
 
         speechText = strTheMonth != "" ? String.format("<p>Here are upcoming events at %s in %s.</p>", strOriginalVenueValue, strTheMonth) :
                 String.format("<p>Here are upcoming events at " + strOriginalVenueValue + "</p>");
-        primaryTextDisplay = strTheMonth != "" ? String.format("Upcoming dates at <b>%s</b> in <b>%s</b>:<br/>", strOriginalVenueValue, strTheMonth) :
+        primaryTextDisplay = strTheMonth != "" ? String.format("Upcoming dates at <b>%s</b> in <b>%s</b>:<br/><br/>", strOriginalVenueValue, strTheMonth) :
                 String.format("Upcoming dates at <b>%s</b>:<br/>", strOriginalVenueValue);
 
         return EventDataUtil.ProcessEventData(input, 0, speechText, primaryTextDisplay, events, INTENT_NAME, strTheVenue, strTheMonth);

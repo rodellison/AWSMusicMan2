@@ -34,32 +34,6 @@ public class TemplatesUtil {
         //Establish the config session attributes if they aren't present
         Map<String, Object> attributes = input.getAttributesManager().getSessionAttributes();
 
-//        if (attributes.get("AppTitle") == null) {
-//            log.info("TemplatesUtil loading Properties into Attributes and setting default values");
-//            PropertiesUtil myProps = new PropertiesUtil();
-//            Set<Object> theConfigProperties = myProps.getAllKeys();
-//            for (Object thisPropKey : theConfigProperties) {
-//                attributes.put((String) thisPropKey, myProps.getPropertyValue((String) thisPropKey));
-//            }
-//            attributes.put("SESSION_INDEX", 0);
-//            attributes.put("SESSION_EVENTS", "");
-//            attributes.put("LAST_SESSION_INTENT", IntentName);
-//        } else
-//        {
-//            switch (IntentName)
-//            {
-//                //Initialize Reset some Attribute values here, based on if we're launching new, or starting over
-//                case "CancelStopIntent":
-//                case "LaunchRequest":
-//                case "RestartSkill":
-//                    attributes.put("SESSION_INDEX", 0);
-//                    attributes.put("SESSION_EVENTS", "");
-//                default:
-//                    attributes.put("LAST_SESSION_INTENT", IntentName);
-//                    break;
-//            }
-//        }
-
         switch (IntentName)
         {
             //Initialize Reset some Attribute values here, based on if we're launching new, or starting over
@@ -86,7 +60,8 @@ public class TemplatesUtil {
         Image image = getImage(LargeImageUrl);
 
         log.info("TemplatesUtil calling getBodyTemplate3");
-        Template template = getBodyTemplate3(title, primaryTextDisplay, secondaryTextDisplay + actionText, image);
+        Template template = getBodyTemplate3(title, prepForTemplateCardText(primaryTextDisplay),
+                prepForTemplateCardText(secondaryTextDisplay + actionText), image);
 
         log.info("TemplatesUtil checking responseSpeechText");
         //This should be the end, as with no response, the skill should be done..
@@ -98,7 +73,7 @@ public class TemplatesUtil {
                 log.info("TemplatesUtil returning Tell response for Display");
                 return input.getResponseBuilder()
                         .withSpeech(speechText)
-                        .withSimpleCard(title, speechText)
+                        .withSimpleCard(title, prepForSimpleStandardCardText(primaryTextDisplay + secondaryTextDisplay))
                         .addRenderTemplateDirective(template)
                         .build();
             } else {
@@ -110,7 +85,7 @@ public class TemplatesUtil {
                         .build();
                 return input.getResponseBuilder()
                         .withSpeech(speechText)
-                        .withStandardCard(title, speechText, standardUICardImage)
+                        .withStandardCard(title, prepForSimpleStandardCardText(primaryTextDisplay + secondaryTextDisplay), standardUICardImage)
                         .build();
             }
         else {
@@ -119,7 +94,7 @@ public class TemplatesUtil {
                 log.info("TemplatesUtil returning Ask response for Display");
                 return input.getResponseBuilder()
                         .withSpeech(speechText)
-                        .withSimpleCard(title, speechText)
+                        .withSimpleCard(title, prepForSimpleStandardCardText(primaryTextDisplay + secondaryTextDisplay))
                         .addRenderTemplateDirective(template)
                         .withReprompt(responseSpeechText)
                         .build();
@@ -132,7 +107,7 @@ public class TemplatesUtil {
                 log.info("TemplatesUtil returning Ask response for Headless");
                 return input.getResponseBuilder()
                         .withSpeech(speechText)
-                        .withStandardCard(title, speechText, standardUICardImage)
+                        .withStandardCard(title, prepForSimpleStandardCardText(primaryTextDisplay + secondaryTextDisplay), standardUICardImage)
                         .withReprompt(responseSpeechText)
                         .build();
             }
@@ -224,5 +199,40 @@ public class TemplatesUtil {
                 .withText(text)
                 .build();
     }
+
+    /**
+     * Helper method that returns text content to be used in the body template.
+     *
+     * @param text incoming text which may have rich text markup that needs removed for general home card text.
+     * @return String that will be rendered for the simple or standard home card
+     */
+    private static String prepForSimpleStandardCardText(String text)
+    {
+        String returnText = text.replace("<br/>", "\n");
+        returnText = returnText.replace("<p>", "");
+        returnText = returnText.replace("</p>", "\n");
+        returnText = returnText.replace("<b>", "");
+        returnText = returnText.replace("</b>", "");
+        returnText = returnText.replace("<font size='1'>", "");
+        returnText = returnText.replace("</font>", "");
+
+        return returnText;
+    }
+    /**
+     * Helper method that returns text content to be used in the body template.
+     *
+     * @param text incoming text which may have speech markup that needs removed for template card text.
+     * @return String that will be rendered for the simple or standard home card
+     */
+    private static String prepForTemplateCardText(String text)
+    {
+        String returnText = text.replace("<p>", "");
+        returnText = returnText.replace("</p>", "");
+        returnText = returnText.replace("<s>", "");
+        returnText = returnText.replace("</s>", "");
+
+        return returnText;
+    }
+
 
 }
