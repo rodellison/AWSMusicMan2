@@ -62,6 +62,11 @@ public class VenueIntentHandler implements RequestHandler {
 
             if (strTheMonth == null)
                 strTheMonth = "";
+            else
+            {
+                //a few known cleanups
+                strTheMonth = strTheMonth.toLowerCase().replace("mae", "May");
+            }
 
             log.warn(strTheMonth == "" ? "Venue slot input recieved: " + strTheVenue : "Venue slot input recieved: " + strTheVenue + ", " + strTheMonth);
             events = getVenueDates(strTheVenue, strTheMonth);

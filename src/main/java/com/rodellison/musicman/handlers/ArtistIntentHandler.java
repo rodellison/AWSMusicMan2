@@ -61,6 +61,11 @@ public class ArtistIntentHandler implements RequestHandler {
             strTheMonth = myMonthSlot.getValue();  //this can be, and may usually be null..
             if (strTheMonth == null)
                 strTheMonth = "";
+            else
+            {
+                //a few known cleanups
+                strTheMonth = strTheMonth.toLowerCase().replace("mae", "May");
+            }
             log.warn(strTheMonth == "" ? "Artist slot input recieved: " + strTheArtist : "Artist slot input recieved: "
                     + strTheArtist + ", " + strTheMonth);
 
