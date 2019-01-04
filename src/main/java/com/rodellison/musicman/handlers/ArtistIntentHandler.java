@@ -4,7 +4,6 @@ import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.dispatcher.request.handler.RequestHandler;
 import com.amazon.ask.model.IntentRequest;
 import com.amazon.ask.model.Response;
-
 import com.amazon.ask.model.Slot;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -14,7 +13,6 @@ import com.rodellison.musicman.util.*;
 // Import log4j classes.
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -25,19 +23,10 @@ import static com.amazon.ask.request.Predicates.intentName;
 public class ArtistIntentHandler implements RequestHandler {
 
     private static final Logger log = LogManager.getLogger(ArtistIntentHandler.class);
-
-    private static PropertiesUtil myProps = new PropertiesUtil();
-
+    private static final String INTENT_NAME = "ArtistIntent";
     private static final String ARTIST_SLOT = "artist";
     private static final String MONTH_SLOT = "month";
-
-    private static final String INTENT_NAME = "ArtistIntent";
-
-    private static String strAPIKey;
-
-    private String DynamoDBTableName;
     private String strOriginalArtistValue;
-
 
     @Override
     public boolean canHandle(HandlerInput input) {
@@ -48,9 +37,6 @@ public class ArtistIntentHandler implements RequestHandler {
     @Override
     public Optional<Response> handle(HandlerInput input) {
 
-
-        strAPIKey = myProps.getPropertyValue("apikey");
-        DynamoDBTableName = myProps.getPropertyValue("DynamoDBTable");
 
         IntentRequest thisRequest=(IntentRequest)input.getRequestEnvelope().getRequest();
 
@@ -99,14 +85,13 @@ public class ArtistIntentHandler implements RequestHandler {
         //If that's the case, then provide a response to user, and ask them to start a new request
         if (null == events || events.isEmpty()) {
 
-            String strARNSNSTopic = myProps.getPropertyValue("SNSMessageTopic");
-            SNSMessageUtil.SendSMSMessage(strARNSNSTopic, INTENT_NAME, strOriginalArtistValue);
+            SNSMessageUtil.SendSMSMessage(INTENT_NAME, "Artist: " + strOriginalArtistValue + ", Month: " + strTheMonth);
             return EventDataUtil.returnNoEventDataFound(input, INTENT_NAME, strOriginalArtistValue, strTheMonth);
 
         }
 
-        speechText = strTheMonth != "" ? String.format("<p>Here is where %s are playing in %s.</p>", strOriginalArtistValue, strTheMonth) :
-                String.format("<p>Here is where " + strOriginalArtistValue + " " + "are playing</p> ");
+        speechText = strTheMonth != "" ? String.format("<p>Here is where %s is playing in %s.</p>", strOriginalArtistValue, strTheMonth) :
+                String.format("<p>Here is where " + strOriginalArtistValue + " " + "is playing</p> ");
 
         primaryTextDisplay = strTheMonth != "" ? String.format("Upcoming dates for <b>%s</b> in <b>%s</b>:<br/>", strOriginalArtistValue, strTheMonth) :
                 String.format("Upcoming dates for <b>%s</b>:<br/><br/>", strOriginalArtistValue);
@@ -131,7 +116,7 @@ public class ArtistIntentHandler implements RequestHandler {
         log.warn("Query the MusicManParmTable for the Artist Value");
         //Update the strTheArtist variable with any updates (in case there was a correction available
         //in the DynamoDB table
-        strTheArtist = DynamoDataUtil.queryMusicManParmTable(strArtistValue, DynamoDBTableName);
+        strTheArtist = DynamoDataUtil.queryMusicManParmTable(strArtistValue);
         //Quick check here to see if a swap value was present. If it was, then change our original value so that it
         //will appear corrected in display cards.
         if (strTheArtist.toLowerCase() != strOriginalArtistValue.toLowerCase())
@@ -146,8 +131,7 @@ public class ArtistIntentHandler implements RequestHandler {
             return null;
         }
 
-       strArtistURLRequest= "http://api.songkick.com/api/3.0/search/artists.json?query=" + strURLEncodedParm + "&apikey=" + strAPIKey;
-
+       strArtistURLRequest= "http://api.songkick.com/api/3.0/search/artists.json?query=" + strURLEncodedParm + "&apikey=APIKEYVALUE";
        String strArtistID = "";
        String responseBody = APIDataUtil.GetAPIRequest(strArtistURLRequest);
 
@@ -170,8 +154,8 @@ public class ArtistIntentHandler implements RequestHandler {
            }
 
            //Now use the Artist ID to get their calendar of upcoming events
-           strArtistCalendarURLRequest = "http://api.songkick.com/api/3.0/artists/" + strArtistID + "/calendar.json?apikey=" + strAPIKey;
-           responseBody = APIDataUtil.GetAPIRequest(strArtistCalendarURLRequest);
+           strArtistCalendarURLRequest = "http://api.songkick.com/api/3.0/artists/" + strArtistID + "/calendar.json?apikey=APIKEYVALUE";
+             responseBody = APIDataUtil.GetAPIRequest(strArtistCalendarURLRequest);
 
            jp=factory.createParser(responseBody);
            input=mapper.readTree(jp);
@@ -193,6 +177,7 @@ public class ArtistIntentHandler implements RequestHandler {
                        String tempString = theEvent.replace(" (", ", on (");
                        tempString = tempString.replace("on (CANCELLED)", " is Cancelled.");
 
+                       strMonthValue = strMonthValue.replace(".", "");
                        if ((strMonthValue != "" && tempString.toLowerCase().contains(strMonthValue.toLowerCase()) || strMonthValue == ""))
                        {
                            if (locOfAt >= 0) {

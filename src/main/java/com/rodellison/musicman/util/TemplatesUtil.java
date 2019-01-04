@@ -5,15 +5,18 @@ import com.amazon.ask.model.Response;
 import com.amazon.ask.model.interfaces.display.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import java.util.*;
 
 public class TemplatesUtil {
 
 
     private static final Logger log = LogManager.getLogger(TemplatesUtil.class);
-    private static PropertiesUtil myProps = new PropertiesUtil();
+    private static final String CLASS_NAME = "TemplatesUtil";
+    private static PropertiesUtil myProps;
 
+    static {
+        myProps = new PropertiesUtil(CLASS_NAME);
+    }
 
     /**
      * main method to create a response, handling both ask and tell type responses..
@@ -26,7 +29,7 @@ public class TemplatesUtil {
      * @return Response the response object to provide back to AWS/Alexa service
      */
     public static Optional<Response> createResponse(HandlerInput input, String speechText, String responseSpeechText,
-                                                    String primaryTextDisplay, String secondaryTextDisplay, String IntentName) {
+                                                    String primaryTextDisplay, String secondaryTextDisplay, String IntentName, Boolean DisplayCard) {
 
 
         log.warn("TemplatesUtil called");
@@ -50,8 +53,6 @@ public class TemplatesUtil {
         input.getAttributesManager().setSessionAttributes(attributes);
 
         String title = myProps.getPropertyValue("AppTitle");
-
-
         String LargeImageUrl = myProps.getPropertyValue("LargeImageUrl");
         String SmallImageUrl = myProps.getPropertyValue("SmallImageUrl");
         String ActionImageUrl = myProps.getPropertyValue("ActionImageUrl");
@@ -69,47 +70,85 @@ public class TemplatesUtil {
         // Device supports display interface
         if (responseSpeechText == "")
             if (null != input.getRequestEnvelope().getContext().getDisplay()) {
-
-                log.info("TemplatesUtil returning Tell response for Display");
-                return input.getResponseBuilder()
-                        .withSpeech(speechText)
-                        .withSimpleCard(title, prepForSimpleStandardCardText(primaryTextDisplay + secondaryTextDisplay))
-                        .addRenderTemplateDirective(template)
-                        .build();
+                if (DisplayCard)
+                {
+                    log.info("TemplatesUtil returning Tell response for Display with card");
+                    return input.getResponseBuilder()
+                            .withSpeech(speechText)
+                            .withSimpleCard(title, prepForSimpleStandardCardText(primaryTextDisplay + secondaryTextDisplay))
+                            .addRenderTemplateDirective(template)
+                            .build();
+                }
+                else
+                {
+                    log.info("TemplatesUtil returning Tell response for Display but no card");
+                    return input.getResponseBuilder()
+                            .withSpeech(speechText)
+                            .build();
+                }
             } else {
                 //Headless device
-                log.info("TemplatesUtil returning Tell response for Headless");
-                com.amazon.ask.model.ui.Image standardUICardImage = com.amazon.ask.model.ui.Image.builder()
-                        .withSmallImageUrl(SmallImageUrl)
-                        .withLargeImageUrl(LargeImageUrl)
-                        .build();
-                return input.getResponseBuilder()
-                        .withSpeech(speechText)
-                        .withStandardCard(title, prepForSimpleStandardCardText(primaryTextDisplay + secondaryTextDisplay), standardUICardImage)
-                        .build();
+                if (DisplayCard) {
+                    log.info("TemplatesUtil returning Tell response for Headless with card");
+                    com.amazon.ask.model.ui.Image standardUICardImage = com.amazon.ask.model.ui.Image.builder()
+                            .withSmallImageUrl(SmallImageUrl)
+                            .withLargeImageUrl(LargeImageUrl)
+                            .build();
+                    return input.getResponseBuilder()
+                            .withSpeech(speechText)
+                            .withStandardCard(title, prepForSimpleStandardCardText(primaryTextDisplay + secondaryTextDisplay), standardUICardImage)
+                            .build();
+                }
+                else
+                {
+                    log.info("TemplatesUtil returning Tell response for Headless with no card");
+                    return input.getResponseBuilder()
+                            .withSpeech(speechText)
+                             .build();
+                }
             }
         else {
             // Device supports display interface
             if (null != input.getRequestEnvelope().getContext().getDisplay()) {
-                log.info("TemplatesUtil returning Ask response for Display");
-                return input.getResponseBuilder()
-                        .withSpeech(speechText)
-                        .withSimpleCard(title, prepForSimpleStandardCardText(primaryTextDisplay + secondaryTextDisplay))
-                        .addRenderTemplateDirective(template)
-                        .withReprompt(responseSpeechText)
-                        .build();
+                if (DisplayCard) {
+                    log.info("TemplatesUtil returning Ask response for Display with Card");
+                    return input.getResponseBuilder()
+                            .withSpeech(speechText)
+                            .withSimpleCard(title, prepForSimpleStandardCardText(primaryTextDisplay + secondaryTextDisplay))
+                            .addRenderTemplateDirective(template)
+                            .withReprompt(responseSpeechText)
+                            .build();
+                }
+                else
+                {
+                    log.info("TemplatesUtil returning Ask response for Display with no Card");
+                    return input.getResponseBuilder()
+                            .withSpeech(speechText)
+                            .withReprompt(responseSpeechText)
+                            .build();
+                }
             } else {
                 //Headless device
-                com.amazon.ask.model.ui.Image standardUICardImage = com.amazon.ask.model.ui.Image.builder()
-                        .withSmallImageUrl(SmallImageUrl)
-                        .withLargeImageUrl(LargeImageUrl)
-                        .build();
-                log.info("TemplatesUtil returning Ask response for Headless");
-                return input.getResponseBuilder()
-                        .withSpeech(speechText)
-                        .withStandardCard(title, prepForSimpleStandardCardText(primaryTextDisplay + secondaryTextDisplay), standardUICardImage)
-                        .withReprompt(responseSpeechText)
-                        .build();
+                if (DisplayCard) {
+                    log.info("TemplatesUtil returning Ask response for Headless with Card");
+                    com.amazon.ask.model.ui.Image standardUICardImage = com.amazon.ask.model.ui.Image.builder()
+                            .withSmallImageUrl(SmallImageUrl)
+                            .withLargeImageUrl(LargeImageUrl)
+                            .build();
+                    return input.getResponseBuilder()
+                            .withSpeech(speechText)
+                            .withStandardCard(title, prepForSimpleStandardCardText(primaryTextDisplay + secondaryTextDisplay), standardUICardImage)
+                            .withReprompt(responseSpeechText)
+                            .build();
+                }
+                else
+                {
+                    log.info("TemplatesUtil returning Ask response for Headless with no Card");
+                     return input.getResponseBuilder()
+                            .withSpeech(speechText)
+                            .withReprompt(responseSpeechText)
+                            .build();
+                }
             }
         }
     }
@@ -215,6 +254,7 @@ public class TemplatesUtil {
         returnText = returnText.replace("</b>", "");
         returnText = returnText.replace("<font size='1'>", "");
         returnText = returnText.replace("</font>", "");
+        returnText = returnText.replace("&", " and ");
 
         return returnText;
     }
@@ -230,6 +270,7 @@ public class TemplatesUtil {
         returnText = returnText.replace("</p>", "");
         returnText = returnText.replace("<s>", "");
         returnText = returnText.replace("</s>", "");
+        returnText = returnText.replace("&", " and ");
 
         return returnText;
     }

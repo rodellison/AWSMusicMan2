@@ -16,7 +16,6 @@ import static com.amazon.ask.request.Predicates.requestType;
 public class LaunchRequestHandler implements RequestHandler {
 
     private static final String INTENT_NAME = "LaunchRequest";
-
     private static final Logger log = LogManager.getLogger(LaunchRequestHandler.class);
 
     @Override
@@ -30,8 +29,8 @@ public class LaunchRequestHandler implements RequestHandler {
         log.warn("LaunchRequestHandler called");
 
         String speechText = "<audio src='soundbank://soundlibrary/musical/amzn_sfx_musical_drone_intro_02'/>";
-        speechText += "Hello!, The Music Man is here to tell you where your favorite artist is playing, or who's coming to a " +
-                "particular venue. Try asking a question similar to one of these:  " +
+        speechText += "Hello!, The Music Man can tell you where an artist is playing, or who's coming to a " +
+                "particular venue. <p>Try asking a question similar to one of these:</p>" +
                 " Who is coming to Staples Center, or Where is Iron Maiden playing in July?";
 
         String repromptSpeechText1 = "<p>Please ask a question similar to one of these:</p>";
@@ -42,7 +41,7 @@ public class LaunchRequestHandler implements RequestHandler {
 
         return TemplatesUtil.createResponse(input, speechText,
                 repromptSpeechText1 + repromptSpeechText2,
-                primaryTextDisplay, secondaryTextDisplay, INTENT_NAME);
+                primaryTextDisplay, secondaryTextDisplay, INTENT_NAME, true);
 
     }
 }

@@ -11,7 +11,13 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 public class DynamoDataUtil {
 
+    private static final String CLASS_NAME = "DynamoDataUtil";
     private static final Logger log = LogManager.getLogger(DynamoDataUtil.class);
+    private static PropertiesUtil myProps;
+
+    static {
+        myProps = new PropertiesUtil(CLASS_NAME);
+    }
 
     /**
      * queryMusicManParmTable is used to interface with a dynamoDB table for the purposes of locating a corrected text value of something
@@ -25,12 +31,14 @@ public class DynamoDataUtil {
      *
      * @return SpeechletResponse object with voice/card response to return to the user
      */
-    public static String queryMusicManParmTable(String strArtistValue, String strDynamoDBTableName) {
+    public static String queryMusicManParmTable(String strArtistValue) {
+
+        String strDynamoDBTableName = myProps.getPropertyValue("DynamoDBTable");
 
         String strTextValue = strArtistValue.toLowerCase();
         try {
 
-            log.warn("Creating AmazonDynamoDBClient");
+            log.info("Creating AmazonDynamoDBClient");
 
             AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
                     .withRegion(Regions.US_EAST_1)
@@ -39,7 +47,7 @@ public class DynamoDataUtil {
             DynamoDB dynamoDB = new DynamoDB(client);
 
             Table table = dynamoDB.getTable(strDynamoDBTableName);
-            log.warn("Finished creating DynamoDB Client, and connecting table to DynamoDB MusicManParmTable");
+            log.info("Finished creating DynamoDB Client, and connecting table to DynamoDB MusicManParmTable");
 
 
             Item item = table.getItem("SongKickInvalidParm", strTextValue);
@@ -58,10 +66,6 @@ public class DynamoDataUtil {
         catch (Exception e) {
 
             log.error("DynamoDB exception error: " + e.getMessage());
-            if (e.getMessage().contains("Connection pool shut down")) {
-
-                log.error("Connection pool closure");
-            }
             //Item not found, or an error - in either case, just return what the user had provided
         }
 

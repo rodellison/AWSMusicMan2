@@ -15,7 +15,13 @@ import java.io.IOException;
 
 public class APIDataUtil {
 
+    private static final String CLASS_NAME = "APIDataUtil";
     private static final Logger log = LoggerFactory.getLogger(APIDataUtil.class);
+    private static PropertiesUtil myProps;
+
+    static {
+        myProps = new PropertiesUtil(CLASS_NAME);
+    }
 
     /**
      * GetAPIRequest is used to call the external (from AWS) API to get data
@@ -27,11 +33,15 @@ public class APIDataUtil {
      */
     public static String GetAPIRequest(String strRequestString) {
 
-        log.warn("Performing APIDataUtil GetAPIRequest");
+
+        String strAPIKey = myProps.getPropertyValue("apikey");
+        String strTheRequestString = strRequestString.replace("APIKEYVALUE", strAPIKey);
+
+        log.warn("Performing APIDataUtil GetAPIRequest : " + strTheRequestString);
 
         CloseableHttpClient httpclient = HttpClients.createDefault();
 
-        HttpGet httpget = new HttpGet(strRequestString);
+        HttpGet httpget = new HttpGet(strTheRequestString);
 
         // Create a response handler
         ResponseHandler<String> responseHandler = new ResponseHandler<String>() {

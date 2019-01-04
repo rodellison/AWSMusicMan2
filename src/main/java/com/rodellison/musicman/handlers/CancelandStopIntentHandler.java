@@ -15,7 +15,6 @@ import static com.amazon.ask.request.Predicates.intentName;
 public class CancelandStopIntentHandler implements RequestHandler {
 
     private static final String INTENT_NAME = "CancelStopIntent";
-
     private static final Logger log = LogManager.getLogger(CancelandStopIntentHandler.class);
 
     @Override
@@ -34,7 +33,7 @@ public class CancelandStopIntentHandler implements RequestHandler {
 
         return TemplatesUtil.createResponse(input, speechText,
                 "",
-                primaryTextDisplay, "", INTENT_NAME);
+                primaryTextDisplay, "", INTENT_NAME, false);
 
     }
 }

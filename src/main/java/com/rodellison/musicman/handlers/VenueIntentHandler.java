@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rodellison.musicman.util.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -25,22 +24,9 @@ import static com.amazon.ask.request.Predicates.intentName;
 public class VenueIntentHandler implements RequestHandler {
 
     private static final Logger log = LogManager.getLogger(VenueIntentHandler.class);
-
-    private static PropertiesUtil myProps = new PropertiesUtil();
-
-    /**
-     * Constant defining number of events to be presented at one time.
-     */
-    private static final int PAGINATION_SIZE = 3;
-
+    private static final String INTENT_NAME = "VenueIntent";
     private static final String VENUE_SLOT = "venue";
     private static final String MONTH_SLOT = "month";
-
-    private static final String INTENT_NAME = "VenueIntent";
-
-    private static String strAPIKey;
-
-    private String DynamoDBTableName;
     private String strOriginalVenueValue = "";
 
     @Override
@@ -51,21 +37,6 @@ public class VenueIntentHandler implements RequestHandler {
 
     @Override
     public Optional<Response> handle(HandlerInput input) {
-
-//        //Establish the config session attributes if they aren't present
-//        Map<String, Object> attributes = input.getAttributesManager().getSessionAttributes();
-//        if (attributes.get("AppTitle") == null) {
-//            PropertiesUtil myProps = new PropertiesUtil();
-//            Set<Object> theConfigProperties = myProps.getAllKeys();
-//            for (Object thisPropKey : theConfigProperties) {
-//                attributes.put((String) thisPropKey, myProps.getPropertyValue((String) thisPropKey));
-//            }
-//            input.getAttributesManager().setSessionAttributes(attributes);
-//        }
-
-        strAPIKey = myProps.getPropertyValue("apikey");
-        DynamoDBTableName = myProps.getPropertyValue("DynamoDBTable");
-
 
         IntentRequest thisRequest = (IntentRequest) input.getRequestEnvelope().getRequest();
 
@@ -110,8 +81,7 @@ public class VenueIntentHandler implements RequestHandler {
         //If that's the case, then provide a response to user, and ask them to start a new request
         if (null == events || events.isEmpty()) {
 
-            String strARNSNSTopic = myProps.getPropertyValue("SNSMessageTopic");
-            SNSMessageUtil.SendSMSMessage(strARNSNSTopic, INTENT_NAME, strOriginalVenueValue);
+            SNSMessageUtil.SendSMSMessage(INTENT_NAME, "Venue: " + strOriginalVenueValue + ", Month: " + strTheMonth);
             return EventDataUtil.returnNoEventDataFound(input, INTENT_NAME, strOriginalVenueValue, strTheMonth);
         }
 
@@ -123,7 +93,6 @@ public class VenueIntentHandler implements RequestHandler {
         return EventDataUtil.ProcessEventData(input, 0, speechText, primaryTextDisplay, events, INTENT_NAME, strTheVenue, strTheMonth);
 
     }
-
 
     /**
      * Creates a {@code ArrayList<String>} to provide the Intent service handler the events they need to formulate for saying.
@@ -139,13 +108,16 @@ public class VenueIntentHandler implements RequestHandler {
         //Some venue names can be misunderstood - query dynamodb MusicManParmTable that houses
         //a list of common failed items - e.g. madison square gardeners should be madison square gardens
         strTheVenue = strTheVenue.toLowerCase().replace("u. s.", "US");   //e.g. U. S. Bank Arena should be US Bank Arena
-        strTheVenue = strTheVenue.toLowerCase().replace("a. t. and t", "AT&T");
+        strTheVenue = strTheVenue.toLowerCase().replace("a. t. and t ", "AT&T");
+        strTheVenue = strTheVenue.toLowerCase().replace("a. t. and t.", "AT&T");
+        strTheVenue = strTheVenue.toLowerCase().replace("b. b. and t.", "BB&T");
         strTheVenue = strTheVenue.toLowerCase().replace(" marina", " Arena");
         strTheVenue = strTheVenue.toLowerCase().replace(" farina", " Arena");
         strTheVenue = strTheVenue.toLowerCase().replace("amplitheater", "Amphitheater");
+
         //Update the value used in the speech with any corrections that may have been made
         log.info("Begin query the MusicManParmTable for the ArtistVenue Value");
-        strTheVenue = DynamoDataUtil.queryMusicManParmTable(strTheVenue, DynamoDBTableName);
+        strTheVenue = DynamoDataUtil.queryMusicManParmTable(strTheVenue);
         //Quick check here to see if a swap value was present. If it was, then change our original value so that it
         //will appear corrected in display cards.
         if (strTheVenue.toLowerCase() != strOriginalVenueValue.toLowerCase())
@@ -160,7 +132,7 @@ public class VenueIntentHandler implements RequestHandler {
             return null;
         }
 
-        strVenueURLRequest = "http://api.songkick.com/api/3.0/search/venues.json?query=" + strURLEncodedParm + "&apikey=" + strAPIKey;
+        strVenueURLRequest = "http://api.songkick.com/api/3.0/search/venues.json?query=" + strURLEncodedParm + "&apikey=APIKEYVALUE";
 
         String strVenueID = "";
         String responseBody = APIDataUtil.GetAPIRequest(strVenueURLRequest);
@@ -184,7 +156,7 @@ public class VenueIntentHandler implements RequestHandler {
             }
 
             //Now use the Venue ID to get their calendar of upcoming events
-            strVenueCalendarURLRequest = "http://api.songkick.com/api/3.0/venues/" + strVenueID + "/calendar.json?apikey=" + strAPIKey;
+            strVenueCalendarURLRequest = "http://api.songkick.com/api/3.0/venues/" + strVenueID + "/calendar.json?apikey=APIKEYVALUE";
             responseBody = APIDataUtil.GetAPIRequest(strVenueCalendarURLRequest);
 
             jp = factory.createParser(responseBody);
@@ -212,7 +184,7 @@ public class VenueIntentHandler implements RequestHandler {
                             //Remove the ' at Cain's Ballroom ' part.
                             theEvent = theEvent.substring(0, loc1) + ", on " + theEvent.substring(loc2);
                         }
-
+                        strMonthValue = strMonthValue.replace(".", "");
                         if ((strMonthValue != "" && theEvent.toLowerCase().contains(strMonthValue.toLowerCase()) || strMonthValue == "")) {
                             if (!strArrayVenuesCalendarEntries.contains(theEvent))
                                 strArrayVenuesCalendarEntries.add(theEvent);

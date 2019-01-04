@@ -16,7 +16,6 @@ import static com.amazon.ask.request.Predicates.intentName;
 public class RestartSkillIntentHandler implements RequestHandler {
 
     private static final String INTENT_NAME = "RestartSkill";
-
     private static final Logger log = LogManager.getLogger(RestartSkillIntentHandler.class);
 
     @Override
@@ -30,17 +29,17 @@ public class RestartSkillIntentHandler implements RequestHandler {
         log.warn("RestartSkillIntentHandler called");
 
         String speechText = "<p>OK. Try asking a question similar to one of these:</p>" +
-                " Who is coming to Staples Center, or Where is Iron Maiden playing in July?";
+                "Who is coming to the Hollywood Bowl, or Where is Ariana Grande playing in June?";
 
         String repromptSpeechText1 = "<p>Please ask a question similar to one of these:</p>";
-        String repromptSpeechText2 = "Who's coming to Staples Center, or Where is Iron Maiden playing in July?";
+        String repromptSpeechText2 = "Who is coming to the Hollywood Bowl, or Where is Ariana Grande playing in June?";
 
         String primaryTextDisplay = "Welcome to <b>The Music Man</b>.<br/><br/>";
         String secondaryTextDisplay = repromptSpeechText1 + "<br/><br/>" + repromptSpeechText2;
 
         return TemplatesUtil.createResponse(input, speechText,
                 repromptSpeechText1 + repromptSpeechText2,
-                primaryTextDisplay, secondaryTextDisplay, INTENT_NAME);
+                primaryTextDisplay, secondaryTextDisplay, INTENT_NAME, false);
 
     }
 }

@@ -15,7 +15,6 @@ import static com.amazon.ask.request.Predicates.intentName;
 public class HelpIntentHandler implements RequestHandler {
 
     private static final String INTENT_NAME = "HelpIntent";
-
     private static final Logger log = LogManager.getLogger(HelpIntentHandler.class);
 
     @Override
@@ -28,14 +27,12 @@ public class HelpIntentHandler implements RequestHandler {
 
         log.warn("HelpIntentHandler called");
 
-        String speechText = "There's various ways to ask for Artist or Venue event information. " +
-                "<p>You can ask a question similar to one of these: </p>" +
-                " Who is coming to Staples Center, or Where is Iron Maiden playing in July?. " +
-                "You can also say 'Start over' to begin a new request, or say 'I'm done' to exit.";
+        String speechText = "There's various ways to ask for Artist or Venue information. " +
+                "<p>Ask a question similar to one of these:</p>" +
+                " Who is coming to the Mohawk, or Where are the Rolling Stones playing in June. ";
 
         String repromptSpeechText1 = "<p>Ask a question similar to one of these:</p>";
-        String repromptSpeechText2 = "Who's coming to Staples Center, or Where is Iron Maiden playing in July?";
-        String repromptSpeechText3 = "You can also say 'Start over' to begin a new request, or say 'I'm done', to exit.";
+        String repromptSpeechText2 = "Who is coming to the Mohawk, or Where are the Rolling Stones playing in June?";
 
         String primaryTextDisplay = "<b>The Music Man Help</b>.<br/><br/>";
         String secondaryTextDisplay = "Alexa, Ask The Music Man:<br/>" +
@@ -49,13 +46,12 @@ public class HelpIntentHandler implements RequestHandler {
                 "who's playing {venue}<br/>"+
                  "for shows coming to {venue}<br/>"+
                 "for shows at {venue}<br/>"+
-                "To get specific events by month, You can add 'in {month}' to any of the requests above<br/><br/>"+
-                "To navigate, Say 'Start over' to start a new search, or 'I'm done' if you're ready to exit." +
+                "To get specific events by month, You can add 'in {month}' to any of the requests above<br/><br/>" +
                 "</font>";
 
         return TemplatesUtil.createResponse(input, speechText,
-                repromptSpeechText1 + repromptSpeechText2 + repromptSpeechText3,
-                primaryTextDisplay, secondaryTextDisplay, INTENT_NAME);
+                repromptSpeechText1 + repromptSpeechText2,
+                primaryTextDisplay, secondaryTextDisplay, INTENT_NAME, true);
     }
 
 }
