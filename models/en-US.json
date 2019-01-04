@@ -1,0 +1,276 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "the music man",
+      "intents": [
+        {
+          "name": "AMAZON.FallbackIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": [
+            "cancel",
+            "I'm done",
+            "I'm finished",
+            "goodbye",
+            "good bye"
+          ]
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": [
+            "help me please",
+            "i need help",
+            "please help me",
+            "help"
+          ]
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": [
+            "stop",
+            "stop please",
+            "please stop"
+          ]
+        },
+        {
+          "name": "FactIntent",
+          "slots": [],
+          "samples": [
+            "tell me a fact",
+            "tell me recent airplane fact",
+            "tell me new airplane fact",
+            "airplane fact please",
+            "i want to hear airplane fact",
+            "i want to hear an airplane fact",
+            "give airplane fact",
+            "give me airplane fact",
+            "tell me airplane fact",
+            "read me an airplane fact",
+            "read airplane fact",
+            "tell me an airplane fact",
+            "airplane fact",
+            "fact"
+          ]
+        },
+        {
+          "name": "AMAZON.MoreIntent",
+          "samples": [
+            "more",
+            "more please"
+          ]
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": [
+            "restart",
+            "home",
+            "new search"
+          ]
+        },
+        {
+          "name": "AMAZON.NavigateSettingsIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.NextIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.PageUpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.PageDownIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.PreviousIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.ScrollRightIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.ScrollDownIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.ScrollLeftIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.ScrollUpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.YesIntent",
+          "samples": [
+            "yes please",
+            "yes"
+          ]
+        },
+        {
+          "name": "AMAZON.NoIntent",
+          "samples": [
+            "no thank you",
+            "no"
+          ]
+        },
+        {
+          "name": "RestartSkillIntent",
+          "slots": [],
+          "samples": [
+            "i want to start over",
+            "start over please",
+            "please start over",
+            "start over"
+          ]
+        },
+        {
+          "name": "ArtistIntent",
+          "slots": [
+            {
+              "name": "artist",
+              "type": "artist"
+            },
+            {
+              "name": "month",
+              "type": "AMAZON.Month"
+            }
+          ],
+          "samples": [
+            " and when is {artist} playing in {month}",
+            "and when is {artist} in {month}",
+            "and where is {artist} playing in {month}",
+            "and where is {artist} in {month}",
+            "and where {artist} is playing in {month}",
+            "when {artist} are playing in {month}",
+            "when {artist} is playing in {month}",
+            "when is {artist} playing in {month}",
+            "when is {artist} in {month}",
+            "when are {artist} playing in {month}",
+            "when are {artist} in {month}",
+            "where is {artist} playing in {month}",
+            "where is {artist} in {month}",
+            "where are {artist} playing in {month}",
+            "where are {artist} in {month}",
+            "where {artist} are playing in {month}",
+            "where {artist} is playing in {month}"
+          ]
+        },
+        {
+          "name": "VenueIntent",
+          "slots": [
+            {
+              "name": "venue",
+              "type": "venue"
+            },
+            {
+              "name": "month",
+              "type": "AMAZON.Month"
+            }
+          ],
+          "samples": [
+            "and who is coming to {venue} in {month}",
+            "and who is playing at {venue} in {month}",
+            "and who's coming to {venue} in {month}",
+            "and who's playing at {venue} in {month}",
+            "and who's playing {venue} in {month}",
+            "and who's at {venue} in {month}",
+            "who is coming to {venue} in {month}",
+            "who is playing at {venue} in {month}",
+            "who's coming to {venue} in {month}",
+            "who's playing at {venue} in {month}",
+            "who's playing {venue} in {month}",
+            "who's at {venue} in {month}",
+            "for events coming to {venue} in {month}",
+            "for events at {venue} in {month}",
+            "for shows coming to {venue} in {month}",
+            "for shows at {venue} in {month}",
+            "for location {venue} in {month}"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "name": "artist",
+          "values": [
+            {
+              "name": {
+                "value": "Tom Petty and the Heart breakers"
+              }
+            },
+            {
+              "name": {
+                "value": "Tom Petty and the Heartbreakers"
+              }
+            },
+            {
+              "name": {
+                "value": "Five Finger Death Punch"
+              }
+            },
+            {
+              "name": {
+                "value": "The Rolling Stones"
+              }
+            },
+            {
+              "name": {
+                "value": "Iron Maiden"
+              }
+            },
+            {
+              "name": {
+                "value": "Rihanna"
+              }
+            }
+          ]
+        },
+        {
+          "name": "venue",
+          "values": [
+            {
+              "name": {
+                "value": "State Bank Amphitheater"
+              }
+            },
+            {
+              "name": {
+                "value": "529"
+              }
+            },
+            {
+              "name": {
+                "value": "Bank of New Hampshire Pavilion"
+              }
+            },
+            {
+              "name": {
+                "value": "Talking Stick Resort Arena"
+              }
+            },
+            {
+              "name": {
+                "value": "American Airlines Arena"
+              }
+            },
+            {
+              "name": {
+                "value": "Staples Center"
+              }
+            },
+            {
+              "name": {
+                "value": "Mohawk"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
