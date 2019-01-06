@@ -77,6 +77,7 @@ public class TemplatesUtil {
                             .withSpeech(speechText)
                             .withSimpleCard(title, prepForSimpleStandardCardText(primaryTextDisplay + secondaryTextDisplay))
                             .addRenderTemplateDirective(template)
+                            .withShouldEndSession(true)
                             .build();
                 }
                 else
@@ -84,6 +85,7 @@ public class TemplatesUtil {
                     log.info("TemplatesUtil returning Tell response for Display but no card");
                     return input.getResponseBuilder()
                             .withSpeech(speechText)
+                            .withShouldEndSession(true)
                             .build();
                 }
             } else {
@@ -97,6 +99,7 @@ public class TemplatesUtil {
                     return input.getResponseBuilder()
                             .withSpeech(speechText)
                             .withStandardCard(title, prepForSimpleStandardCardText(primaryTextDisplay + secondaryTextDisplay), standardUICardImage)
+                            .withShouldEndSession(true)
                             .build();
                 }
                 else
@@ -104,7 +107,8 @@ public class TemplatesUtil {
                     log.info("TemplatesUtil returning Tell response for Headless with no card");
                     return input.getResponseBuilder()
                             .withSpeech(speechText)
-                             .build();
+                            .withShouldEndSession(true)
+                            .build();
                 }
             }
         else {
