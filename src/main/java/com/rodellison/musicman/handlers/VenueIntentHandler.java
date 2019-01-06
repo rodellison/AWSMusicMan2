@@ -110,8 +110,9 @@ public class VenueIntentHandler implements RequestHandler {
         String strTheVenue, strVenueURLRequest, strVenueCalendarURLRequest;
         strTheVenue = strVenueValue;
 
-        //Some venue names can be misunderstood - query dynamodb MusicManParmTable that houses
-        //a list of common failed items - e.g. madison square gardeners should be madison square gardens
+        //Some venue names and utterences can be misunderstood
+        //a list of common failed items, and sometimes when the user inadvertantly includes things like 'tonight, next week, etc.'
+        // e.g. madison square gardeners should be madison square gardens
         strTheVenue = strTheVenue.toLowerCase().replace("u. s.", "US");   //e.g. U. S. Bank Arena should be US Bank Arena
         strTheVenue = strTheVenue.toLowerCase().replace("a. t. and t ", "AT&T");
         strTheVenue = strTheVenue.toLowerCase().replace("a. t. and t.", "AT&T");
@@ -119,6 +120,13 @@ public class VenueIntentHandler implements RequestHandler {
         strTheVenue = strTheVenue.toLowerCase().replace(" marina", " Arena");
         strTheVenue = strTheVenue.toLowerCase().replace(" farina", " Arena");
         strTheVenue = strTheVenue.toLowerCase().replace("amplitheater", "Amphitheater");
+        strTheVenue = strTheVenue.toLowerCase().replace(" tonight", "");
+        strTheVenue = strTheVenue.toLowerCase().replace(" tomorrow", "");
+        strTheVenue = strTheVenue.toLowerCase().replace("  this week", "");
+        strTheVenue = strTheVenue.toLowerCase().replace("  next week", "");
+        strTheVenue = strTheVenue.toLowerCase().replace("  this month", "");
+        strTheVenue = strTheVenue.toLowerCase().replace(" next month", "");
+
 
         //Update the value used in the speech with any corrections that may have been made
         log.info("Begin query the MusicManParmTable for the ArtistVenue Value");

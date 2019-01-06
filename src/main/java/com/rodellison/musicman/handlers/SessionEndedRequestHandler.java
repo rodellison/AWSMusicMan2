@@ -25,7 +25,7 @@ public class SessionEndedRequestHandler implements RequestHandler {
     @Override
     public Optional<Response> handle(HandlerInput input) {
         RequestEnvelope envelope = input.getRequestEnvelope();
-        log.info("onSessionEnded requestId={}, sessionId={}", envelope.getRequest().getRequestId(),
+        log.warn("onSessionEnded requestId={}, sessionId={}", envelope.getRequest().getRequestId(),
                 envelope.getSession().getSessionId());
 
         // any cleanup logic goes here

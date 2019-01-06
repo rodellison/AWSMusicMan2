@@ -115,13 +115,19 @@ public class ArtistIntentHandler implements RequestHandler {
     protected ArrayList<String> getArtistDates(String strArtistValue, String strMonthValue) {
 
         String strTheArtist, strArtistURLRequest, strArtistCalendarURLRequest;
+        strTheArtist = strArtistValue;
+
+        //a list of some failed items noticed that were included in the Artist intent captured slot..
+        // just removing them before trying to query the artist..
+
+        strTheArtist = strTheArtist.toLowerCase().replace(" play now", "");
 
         //Artist names may be frequently misunderstood - query dynamodb MusicManParmTable that houses
         //a list of common failed items - e.g. government mule should be Gov't Mule when querying Songkick..
         log.warn("Query the MusicManParmTable for the Artist Value");
         //Update the strTheArtist variable with any updates (in case there was a correction available
         //in the DynamoDB table
-        strTheArtist = DynamoDataUtil.queryMusicManParmTable(strArtistValue);
+        strTheArtist = DynamoDataUtil.queryMusicManParmTable(strTheArtist);
         //Quick check here to see if a swap value was present. If it was, then change our original value so that it
         //will appear corrected in display cards.
         if (strTheArtist.toLowerCase() != strOriginalArtistValue.toLowerCase())
