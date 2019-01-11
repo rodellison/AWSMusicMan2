@@ -142,5 +142,29 @@ public class EventDataUtil {
                 primaryTextDisplay, secondaryTextDisplay, strIntentName, true);
     }
 
+    public static String cleanupKnownUserError(String theValue)
+    {
+        String cleanedUpValue =  theValue;
+
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace("u. s.", "US");   //e.g. U. S. Bank Arena should be US Bank Arena
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace("a. t. and t ", "AT&T");
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace("a. t. and t.", "AT&T");
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace("b. b. and t.", "BB&T");
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace(" marina", " Arena");
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace(" farina", " Arena");
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace("amplitheater", "Amphitheater");
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace(" today", "");
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace(" tonight", "");
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace(" tomorrow", "");
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace(" this week", "");
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace(" next week", "");
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace(" this month", "");
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace(" next month", "");
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace("the rock group ", "");
+        cleanedUpValue = cleanedUpValue.toLowerCase().replace("the music group ", "");
+
+        return cleanedUpValue;
+
+    }
 
 }

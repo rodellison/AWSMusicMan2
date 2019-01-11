@@ -85,8 +85,9 @@ public class VenueIntentHandler implements RequestHandler {
         //There may not be any events, or the Songkick service may not recognize the value
         //If that's the case, then provide a response to user, and ask them to start a new request
         if (null == events || events.isEmpty()) {
-
-            SNSMessageUtil.SendSMSMessage(INTENT_NAME, "Venue: " + strOriginalVenueValue + ", Month: " + strTheMonth);
+            //Only send an SNS if events was null.. events won't be null if there WERE events, but just not for the requested month, etc.
+            if (events == null)
+                SNSMessageUtil.SendSMSMessage(INTENT_NAME, "Venue: " + strOriginalVenueValue + ", Month: " + strTheMonth);
             return EventDataUtil.returnNoEventDataFound(input, INTENT_NAME, strOriginalVenueValue, strTheMonth);
         }
 
@@ -108,25 +109,11 @@ public class VenueIntentHandler implements RequestHandler {
     protected ArrayList<String> getVenueDates(String strVenueValue, String strMonthValue) {
 
         String strTheVenue, strVenueURLRequest, strVenueCalendarURLRequest;
-        strTheVenue = strVenueValue;
 
         //Some venue names and utterences can be misunderstood
         //a list of common failed items, and sometimes when the user inadvertantly includes things like 'tonight, next week, etc.'
         // e.g. madison square gardeners should be madison square gardens
-        strTheVenue = strTheVenue.toLowerCase().replace("u. s.", "US");   //e.g. U. S. Bank Arena should be US Bank Arena
-        strTheVenue = strTheVenue.toLowerCase().replace("a. t. and t ", "AT&T");
-        strTheVenue = strTheVenue.toLowerCase().replace("a. t. and t.", "AT&T");
-        strTheVenue = strTheVenue.toLowerCase().replace("b. b. and t.", "BB&T");
-        strTheVenue = strTheVenue.toLowerCase().replace(" marina", " Arena");
-        strTheVenue = strTheVenue.toLowerCase().replace(" farina", " Arena");
-        strTheVenue = strTheVenue.toLowerCase().replace("amplitheater", "Amphitheater");
-        strTheVenue = strTheVenue.toLowerCase().replace(" tonight", "");
-        strTheVenue = strTheVenue.toLowerCase().replace(" tomorrow", "");
-        strTheVenue = strTheVenue.toLowerCase().replace("  this week", "");
-        strTheVenue = strTheVenue.toLowerCase().replace("  next week", "");
-        strTheVenue = strTheVenue.toLowerCase().replace("  this month", "");
-        strTheVenue = strTheVenue.toLowerCase().replace(" next month", "");
-
+        strTheVenue = EventDataUtil.cleanupKnownUserError(strVenueValue);
 
         //Update the value used in the speech with any corrections that may have been made
         log.info("Begin query the MusicManParmTable for the ArtistVenue Value");
