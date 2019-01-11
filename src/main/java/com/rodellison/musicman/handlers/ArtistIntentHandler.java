@@ -58,6 +58,14 @@ public class ArtistIntentHandler implements RequestHandler {
             strOriginalArtistValue = myArtistSlot.getValue();
             strTheArtist = strOriginalArtistValue.toLowerCase();
 
+            //Edit to avoid calling Songkick API for times when Alexa may have captured background audio or someone asking
+            //the music man who is playing a song...
+            //e.g.. see alot of these type of requests which are in error: ArtistIntentHandler - Artist slot input recieved: play passion born
+            if (strTheArtist.toLowerCase().contains("play") && !(strTheArtist.toLowerCase().contains("coldplay") || strTheArtist.toLowerCase().contains("plug ")))
+                return EventDataUtil.returnFailSpeech(input, INTENT_NAME);
+            if (strTheArtist.toLowerCase().contains(" song") || strTheArtist.toLowerCase().contains(" music"))
+                return EventDataUtil.returnFailSpeech(input, INTENT_NAME);
+
             strTheMonth = myMonthSlot.getValue();  //this can be, and may usually be null..
             if (strTheMonth == null)
                 strTheMonth = "";
@@ -66,8 +74,9 @@ public class ArtistIntentHandler implements RequestHandler {
                 //a few known cleanups
                 strTheMonth = strTheMonth.toLowerCase().replace("mae", "May");
             }
-            log.warn(strTheMonth == "" ? "Artist slot input recieved: " + strTheArtist : "Artist slot input recieved: "
+            log.warn(strTheMonth == "" ? "Artist slot input received: " + strTheArtist : "Artist slot input received: "
                     + strTheArtist + ", " + strTheMonth);
+
 
             //This is if the user is spelling out a name, or for some names like
             strTheArtist = strTheArtist.replace(". ", "");
@@ -90,7 +99,9 @@ public class ArtistIntentHandler implements RequestHandler {
         //If that's the case, then provide a response to user, and ask them to start a new request
         if (null == events || events.isEmpty()) {
 
-            SNSMessageUtil.SendSMSMessage(INTENT_NAME, "Artist: " + strOriginalArtistValue + ", Month: " + strTheMonth);
+            //Only send an SNS if events was null meaning likely bad user input.. events won't be null if there WERE events, but just not for the requested month, etc.
+            if (events == null)
+                SNSMessageUtil.SendSMSMessage(INTENT_NAME, "Artist: " + strOriginalArtistValue + ", Month: " + strTheMonth);
             return EventDataUtil.returnNoEventDataFound(input, INTENT_NAME, strOriginalArtistValue, strTheMonth);
 
         }
@@ -115,12 +126,7 @@ public class ArtistIntentHandler implements RequestHandler {
     protected ArrayList<String> getArtistDates(String strArtistValue, String strMonthValue) {
 
         String strTheArtist, strArtistURLRequest, strArtistCalendarURLRequest;
-        strTheArtist = strArtistValue;
-
-        //a list of some failed items noticed that were included in the Artist intent captured slot..
-        // just removing them before trying to query the artist..
-
-        strTheArtist = strTheArtist.toLowerCase().replace(" play now", "");
+        strTheArtist = EventDataUtil.cleanupKnownUserError(strArtistValue);
 
         //Artist names may be frequently misunderstood - query dynamodb MusicManParmTable that houses
         //a list of common failed items - e.g. government mule should be Gov't Mule when querying Songkick..
