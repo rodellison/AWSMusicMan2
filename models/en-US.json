@@ -35,55 +35,12 @@
           ]
         },
         {
-          "name": "AMAZON.MoreIntent",
-          "samples": [
-            "more",
-            "more please"
-          ]
-        },
-        {
           "name": "AMAZON.NavigateHomeIntent",
           "samples": [
             "restart",
             "home",
             "new search"
           ]
-        },
-        {
-          "name": "AMAZON.NavigateSettingsIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.NextIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.PageUpIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.PageDownIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.PreviousIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.ScrollRightIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.ScrollDownIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.ScrollLeftIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.ScrollUpIntent",
-          "samples": []
         },
         {
           "name": "AMAZON.YesIntent",

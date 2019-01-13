@@ -13,11 +13,7 @@ public class SNSMessageUtil {
 
     private static final String CLASS_NAME = "SNSMessageUtil";
     private static final Logger log = LogManager.getLogger(SNSMessageUtil.class);
-    private static PropertiesUtil myProps;
-
-    static {
-        myProps = new PropertiesUtil(CLASS_NAME);
-    }
+    private static PropertiesUtil myProps = new PropertiesUtil(CLASS_NAME);
 
     /**
      * SendSMSMessage is used to interface with AWS SNS service for the purposes of sending the value that
@@ -42,7 +38,7 @@ public class SNSMessageUtil {
             PublishRequest publishRequest = new PublishRequest(topic, msg);
             PublishResult publishResult = snsClient.publish(publishRequest);
 //print MessageId of message published to SNS topic
-            log.warn("MessageId - " + publishResult.getMessageId());
+            log.info("MessageId - " + publishResult.getMessageId());
 
         } catch (Exception e) {
 

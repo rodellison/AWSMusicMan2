@@ -9,10 +9,9 @@ import com.rodellison.musicman.util.PropertiesUtil;
 public class MusicManStreamHandler extends SkillStreamHandler {
 
     private static String CLASS_NAME = "MusicManStreamHandler";
+    private static PropertiesUtil myProps = new PropertiesUtil(CLASS_NAME);
 
     private static Skill getSkill() {
-
-        PropertiesUtil myProps = new PropertiesUtil(CLASS_NAME);
 
         return Skills.standard()
                 .addRequestHandlers(

@@ -51,7 +51,6 @@ public class VenueIntentHandler implements RequestHandler {
                 primaryTextDisplay,
                 strTheVenue, strTheMonth = "";
 
-
         try {
             myVenueSlot = slots.get(VENUE_SLOT);
             myMonthSlot = slots.get(MONTH_SLOT);
@@ -82,6 +81,10 @@ public class VenueIntentHandler implements RequestHandler {
         log.info("Process Venue event data into Speech and Cards");
         int currentIndex = 0;
 
+        strOriginalVenueValue = EventDataUtil.toTitleCase(strOriginalVenueValue);
+        strTheMonth = EventDataUtil.toTitleCase(strTheMonth);
+
+
         //There may not be any events, or the Songkick service may not recognize the value
         //If that's the case, then provide a response to user, and ask them to start a new request
         if (null == events || events.isEmpty()) {
@@ -93,10 +96,10 @@ public class VenueIntentHandler implements RequestHandler {
 
         speechText = strTheMonth != "" ? String.format("<p>Here are upcoming events at %s in %s.</p>", strOriginalVenueValue, strTheMonth) :
                 String.format("<p>Here are upcoming events at " + strOriginalVenueValue + "</p>");
-        primaryTextDisplay = strTheMonth != "" ? String.format("Upcoming dates at <b>%s</b> in <b>%s</b>:<br/><br/>", strOriginalVenueValue, strTheMonth) :
-                String.format("Upcoming dates at <b>%s</b>:<br/>", strOriginalVenueValue);
+        primaryTextDisplay = strTheMonth != "" ? String.format("Upcoming events at %s in %s:", strOriginalVenueValue, strTheMonth) :
+                String.format("Upcoming events at %s:", strOriginalVenueValue);
 
-        return EventDataUtil.ProcessEventData(input, 0, speechText, primaryTextDisplay, events, INTENT_NAME, strTheVenue, strTheMonth);
+        return EventDataUtil.ProcessEventData(input, 0, speechText, primaryTextDisplay, events, INTENT_NAME, strTheVenue, strTheMonth, "");
 
     }
 

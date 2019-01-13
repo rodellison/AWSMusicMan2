@@ -26,21 +26,12 @@ public class NoIntentHandler implements RequestHandler {
 
         log.warn("NoIntentHandler called");
 
-        String speechText,
-                repromptSpeechText1,
-                primaryTextDisplay,
-                secondaryTextDisplay = "";
+        String speechText = "Ok. say 'Start over' to do a new search, or 'I'm done' to exit.";
 
-        speechText = "Ok. say 'Start over' to do a new search, or 'I'm done' to exit.";
-        repromptSpeechText1 = speechText;
-
-        primaryTextDisplay = "<b>The Music Man</b>.<br/><br/>";
-        secondaryTextDisplay = "Say 'Start over' to do a new search, or 'I'm done' to exit.";
-
-
-        return TemplatesUtil.createResponse(input, speechText,
-                repromptSpeechText1,
-                primaryTextDisplay, secondaryTextDisplay, INTENT_NAME, false);
+        return input.getResponseBuilder()
+                .withSpeech(speechText)
+                .withReprompt(speechText)
+                .build();
 
 
 

@@ -2,6 +2,7 @@ package com.rodellison.musicman.handlers;
 
 import com.amazon.ask.dispatcher.request.handler.HandlerInput;
 import com.amazon.ask.dispatcher.request.handler.RequestHandler;
+
 import com.amazon.ask.model.IntentRequest;
 import com.amazon.ask.model.Response;
 import com.amazon.ask.model.Slot;
@@ -13,12 +14,15 @@ import com.rodellison.musicman.util.*;
 // Import log4j classes.
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
 
 import static com.amazon.ask.request.Predicates.intentName;
+
 
 public class ArtistIntentHandler implements RequestHandler {
 
@@ -27,6 +31,7 @@ public class ArtistIntentHandler implements RequestHandler {
     private static final String ARTIST_SLOT = "artist";
     private static final String MONTH_SLOT = "month";
     private String strOriginalArtistValue;
+    private String strArtistID;
 
     @Override
     public boolean canHandle(HandlerInput input) {
@@ -95,6 +100,9 @@ public class ArtistIntentHandler implements RequestHandler {
         log.info("Process Artist event data into Speech and Cards");
         int currentIndex = 0;
 
+        strOriginalArtistValue = EventDataUtil.toTitleCase(strOriginalArtistValue);
+        strTheMonth = EventDataUtil.toTitleCase(strTheMonth);
+
         //There may not be any events, or the Songkick service may not recognize the value
         //If that's the case, then provide a response to user, and ask them to start a new request
         if (null == events || events.isEmpty()) {
@@ -109,10 +117,10 @@ public class ArtistIntentHandler implements RequestHandler {
         speechText = strTheMonth != "" ? String.format("<p>Here is where %s is playing in %s.</p>", strOriginalArtistValue, strTheMonth) :
                 String.format("<p>Here is where " + strOriginalArtistValue + " " + "is playing</p> ");
 
-        primaryTextDisplay = strTheMonth != "" ? String.format("Upcoming dates for <b>%s</b> in <b>%s</b>:<br/>", strOriginalArtistValue, strTheMonth) :
-                String.format("Upcoming dates for <b>%s</b>:<br/><br/>", strOriginalArtistValue);
+        primaryTextDisplay = strTheMonth != "" ? String.format("Upcoming dates for %s in %s:", strOriginalArtistValue, strTheMonth) :
+                String.format("Upcoming dates for %s:", strOriginalArtistValue);
 
-        return EventDataUtil.ProcessEventData(input, 0, speechText, primaryTextDisplay, events, INTENT_NAME, strTheArtist, strTheMonth);
+        return EventDataUtil.ProcessEventData(input, 0, speechText, primaryTextDisplay, events, INTENT_NAME, strTheArtist, strTheMonth, strArtistID);
 
     }
 
@@ -149,7 +157,6 @@ public class ArtistIntentHandler implements RequestHandler {
         }
 
        strArtistURLRequest= "http://api.songkick.com/api/3.0/search/artists.json?query=" + strURLEncodedParm + "&apikey=APIKEYVALUE";
-       String strArtistID = "";
        String responseBody = APIDataUtil.GetAPIRequest(strArtistURLRequest);
 
         log.info("getArtistDates: Begin JSON Processing");

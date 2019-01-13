@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.Set;
+
 
 public class PropertiesUtil {
 
@@ -15,7 +15,7 @@ public class PropertiesUtil {
 
     public PropertiesUtil(String strCaller){
 
-        log.warn("Performing PropertiesUtil load for " + strCaller);
+        log.info("Performing PropertiesUtil load for " + strCaller);
 
         InputStream is = null;
         try {
@@ -30,11 +30,6 @@ public class PropertiesUtil {
             log.error(e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    public Set<Object> getAllKeys(){
-        Set<Object> keys = prop.keySet();
-        return keys;
     }
 
     public String getPropertyValue(String key)
