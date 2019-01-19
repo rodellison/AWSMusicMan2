@@ -30,8 +30,8 @@ public class ArtistIntentHandler implements RequestHandler {
     private static final String INTENT_NAME = "ArtistIntent";
     private static final String ARTIST_SLOT = "artist";
     private static final String MONTH_SLOT = "month";
-    private String strOriginalArtistValue;
     private String strArtistID;
+    private String strTheArtist;
 
     @Override
     public boolean canHandle(HandlerInput input) {
@@ -53,22 +53,21 @@ public class ArtistIntentHandler implements RequestHandler {
         log.warn("ArtistIntentHandler called");
 
         String speechText,
-                primaryTextDisplay ,
-                strTheArtist, strTheMonth = "";
+                primaryTextDisplay,
+                strTheMonth = "";
 
         try {
             myArtistSlot = slots.get(ARTIST_SLOT);
             myMonthSlot = slots.get(MONTH_SLOT);
 
-            strOriginalArtistValue = myArtistSlot.getValue();
-            strTheArtist = strOriginalArtistValue.toLowerCase();
+            strTheArtist = myArtistSlot.getValue().toLowerCase();
 
             //Edit to avoid calling Songkick API for times when Alexa may have captured background audio or someone asking
             //the music man who is playing a song...
             //e.g.. see alot of these type of requests which are in error: ArtistIntentHandler - Artist slot input recieved: play passion born
-            if (strTheArtist.toLowerCase().contains("play") && !(strTheArtist.toLowerCase().contains("coldplay") || strTheArtist.toLowerCase().contains("plug ")))
+            if (strTheArtist.contains("play") && !(strTheArtist.contains("coldplay") || strTheArtist.contains("plug ")))
                 return EventDataUtil.returnFailSpeech(input, INTENT_NAME);
-            if (strTheArtist.toLowerCase().contains(" song") || strTheArtist.toLowerCase().contains(" music"))
+            if (strTheArtist.contains(" song") || strTheArtist.contains(" music"))
                 return EventDataUtil.returnFailSpeech(input, INTENT_NAME);
 
             strTheMonth = myMonthSlot.getValue();  //this can be, and may usually be null..
@@ -100,7 +99,7 @@ public class ArtistIntentHandler implements RequestHandler {
         log.info("Process Artist event data into Speech and Cards");
         int currentIndex = 0;
 
-        strOriginalArtistValue = EventDataUtil.toTitleCase(strOriginalArtistValue);
+        strTheArtist = EventDataUtil.toTitleCase(strTheArtist);
         strTheMonth = EventDataUtil.toTitleCase(strTheMonth);
 
         //There may not be any events, or the Songkick service may not recognize the value
@@ -109,16 +108,16 @@ public class ArtistIntentHandler implements RequestHandler {
 
             //Only send an SNS if events was null meaning likely bad user input.. events won't be null if there WERE events, but just not for the requested month, etc.
             if (events == null)
-                SNSMessageUtil.SendSMSMessage(INTENT_NAME, "Artist: " + strOriginalArtistValue + ", Month: " + strTheMonth);
-            return EventDataUtil.returnNoEventDataFound(input, INTENT_NAME, strOriginalArtistValue, strTheMonth);
+                SNSMessageUtil.SendSMSMessage(INTENT_NAME, "Artist: " + strTheArtist + ", Month: " + strTheMonth);
+            return EventDataUtil.returnNoEventDataFound(input, INTENT_NAME, strTheArtist, strTheMonth);
 
         }
 
-        speechText = strTheMonth != "" ? String.format("<p>Here is where %s is playing in %s.</p>", strOriginalArtistValue, strTheMonth) :
-                String.format("<p>Here is where " + strOriginalArtistValue + " " + "is playing</p> ");
+        speechText = strTheMonth != "" ? String.format("<p>Here is where %s is playing in %s.</p>", strTheArtist, strTheMonth) :
+                String.format("<p>Here is where " + strTheArtist + " " + "is playing</p> ");
 
-        primaryTextDisplay = strTheMonth != "" ? String.format("Upcoming dates for %s in %s:", strOriginalArtistValue, strTheMonth) :
-                String.format("Upcoming dates for %s:", strOriginalArtistValue);
+        primaryTextDisplay = strTheMonth != "" ? String.format("Upcoming dates for %s in %s:", strTheArtist, strTheMonth) :
+                String.format("Upcoming dates for %s:", strTheArtist);
 
         return EventDataUtil.ProcessEventData(input, 0, speechText, primaryTextDisplay, events, INTENT_NAME, strTheArtist, strTheMonth, strArtistID);
 
@@ -133,7 +132,7 @@ public class ArtistIntentHandler implements RequestHandler {
      */
     protected ArrayList<String> getArtistDates(String strArtistValue, String strMonthValue) {
 
-        String strTheArtist, strArtistURLRequest, strArtistCalendarURLRequest;
+        String strArtistURLRequest, strArtistCalendarURLRequest;
         strTheArtist = EventDataUtil.cleanupKnownUserError(strArtistValue);
 
         //Artist names may be frequently misunderstood - query dynamodb MusicManParmTable that houses
@@ -142,10 +141,6 @@ public class ArtistIntentHandler implements RequestHandler {
         //Update the strTheArtist variable with any updates (in case there was a correction available
         //in the DynamoDB table
         strTheArtist = DynamoDataUtil.queryMusicManParmTable(strTheArtist);
-        //Quick check here to see if a swap value was present. If it was, then change our original value so that it
-        //will appear corrected in display cards.
-        if (strTheArtist.toLowerCase() != strOriginalArtistValue.toLowerCase())
-            strOriginalArtistValue = strTheArtist;
         log.warn("Processing Artist request for: " + strTheArtist);
 
         String strURLEncodedParm = "";

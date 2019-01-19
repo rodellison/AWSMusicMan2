@@ -67,6 +67,13 @@ public class EventDataUtil {
             }
         }
 
+        //This is just to make sure that theres always 3 entries to display in the APL fields
+        for (int i = textEvents.size(); i<=3; i++)
+        {
+            textEvents.add(" ");
+        }
+
+
         log.info("Process event data 2 for reprompt queue");
 
         if (events.size() > currentIndex) {
