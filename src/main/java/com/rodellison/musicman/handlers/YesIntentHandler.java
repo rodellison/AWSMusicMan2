@@ -14,7 +14,6 @@ import static com.amazon.ask.request.Predicates.intentName;
 
 public class YesIntentHandler implements RequestHandler {
 
-    private static final String INTENT_NAME = "YesIntent";
     private static final Logger log = LogManager.getLogger(YesIntentHandler.class);
 
     @Override
@@ -36,15 +35,25 @@ public class YesIntentHandler implements RequestHandler {
         String lastSessionIntent = (String) attributes.get("LAST_SESSION_INTENT");
         String strArtistVenueValue = (String)attributes.get("ARTIST_VENUE_VALUE");
         String strMonthValue = (String)attributes.get("MONTH_VALUE");
+        String strArtistID = (String)attributes.get("ARTIST_ID");
+
+        if (strArtistVenueValue != null)
+            strArtistVenueValue = EventDataUtil.toTitleCase(strArtistVenueValue);
+        else
+            strArtistVenueValue = "";
+        if (strMonthValue != null)
+            strMonthValue = EventDataUtil.toTitleCase(strMonthValue);
+        else
+            strMonthValue = "";
 
         if (lastSessionIntent.equals("ArtistIntent"))
-            primaryTextDisplay = strMonthValue != "" && strMonthValue != null ? String.format("Upcoming dates for <b>%s</b> in <b>%s</b>:<br/><br/>", strArtistVenueValue, strMonthValue) :
-                    String.format("Upcoming dates for <b>%s</b>:<br/>", strArtistVenueValue);
-       else
-            primaryTextDisplay = strMonthValue != "" && strMonthValue != null ? String.format("Upcoming dates at <b>%s</b> in <b>%s</b>:<br/><br/>", strArtistVenueValue, strMonthValue) :
-                    String.format("Upcoming dates at <b>%s</b>:<br/>", strArtistVenueValue);
+            primaryTextDisplay = strMonthValue != "" && strMonthValue != null ? String.format("Upcoming dates for %s in %s:", strArtistVenueValue, strMonthValue) :
+                    String.format("Upcoming dates for %s:", strArtistVenueValue);
+        else
+            primaryTextDisplay = strMonthValue != "" && strMonthValue != null ? String.format("Upcoming dates at %s in %s:", strArtistVenueValue, strMonthValue) :
+                    String.format("Upcoming dates at %s:", strArtistVenueValue);
 
-        return EventDataUtil.ProcessEventData(input, sessionIndex, "", primaryTextDisplay, events, lastSessionIntent, strArtistVenueValue, strMonthValue);
+        return EventDataUtil.ProcessEventData(input, sessionIndex, "", primaryTextDisplay, events, lastSessionIntent, strArtistVenueValue, strMonthValue, strArtistID);
 
     }
 

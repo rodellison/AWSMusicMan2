@@ -31,9 +31,9 @@ public class CancelandStopIntentHandler implements RequestHandler {
         speechText += "<audio src='soundbank://soundlibrary/musical/amzn_sfx_musical_drone_intro_02'/>";
         String primaryTextDisplay = "<br/>Goodbye!";
 
-        return TemplatesUtil.createResponse(input, speechText,
-                "",
-                primaryTextDisplay, "", INTENT_NAME, false);
+        return input.getResponseBuilder()
+                .withSpeech(speechText)
+                 .build();
 
     }
 }

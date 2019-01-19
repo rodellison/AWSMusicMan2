@@ -8,20 +8,17 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+// Import log4j classes.
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 
 public class APIDataUtil {
 
     private static final String CLASS_NAME = "APIDataUtil";
-    private static final Logger log = LoggerFactory.getLogger(APIDataUtil.class);
-    private static PropertiesUtil myProps;
-
-    static {
-        myProps = new PropertiesUtil(CLASS_NAME);
-    }
+    private static final Logger log = LogManager.getLogger(APIDataUtil.class);
+    private static PropertiesUtil myProps = new PropertiesUtil(CLASS_NAME);
 
     /**
      * GetAPIRequest is used to call the external (from AWS) API to get data

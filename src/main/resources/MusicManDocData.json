@@ -1,0 +1,1149 @@
+{
+  "document": {
+    "type": "APL",
+    "version": "1.0",
+    "theme": "dark",
+    "import": [
+      {
+        "name": "alexa-viewport-profiles",
+        "version": "1.0.0"
+      },
+      {
+        "name": "alexa-layouts",
+        "version": "1.0.0"
+      },
+      {
+        "name": "alexa-styles",
+        "version": "1.0.0"
+      }
+    ],
+    "resources": [
+      {
+        "description": "Stock color for the light theme",
+        "colors": {
+          "colorTextPrimary": "#151920"
+        }
+      },
+      {
+        "description": "Stock color for the dark theme",
+        "when": "${viewport.theme == 'dark'}",
+        "colors": {
+          "colorTextPrimary": "#f0f1ef"
+        }
+      },
+      {
+        "description": "Standard font sizes",
+        "dimensions": {
+          "textSizeBody": 44,
+          "textSizePrimary": 24,
+          "textSizePrimary2": 30,
+          "textSizePrimary3": 36,
+          "textSizeSecondary": 23,
+          "textSizeSecondaryHint": 25
+        }
+      },
+      {
+        "description": "Common spacing values",
+        "dimensions": {
+          "spacingThin": 6,
+          "spacingSmall": 12,
+          "spacingMedium": 24,
+          "spacingLarge": 48,
+          "spacingExtraLarge": 72
+        }
+      },
+      {
+        "description": "Common margins and padding",
+        "dimensions": {
+          "marginTop": 40,
+          "marginLeft": 60,
+          "marginRight": 60,
+          "marginBottom": 40
+        }
+      }
+    ],
+    "styles": {
+      "textStyleBase": {
+        "description": "Base font description; set color and core font family",
+        "values": [
+          {
+            "color": "@colorTextPrimary",
+            "fontFamily": "Amazon Ember"
+          }
+        ]
+      },
+      "textStyleBase0": {
+        "description": "Thin version of basic font",
+        "extend": "textStyleBase",
+        "values": {
+          "fontWeight": "100"
+        }
+      },
+      "textStyleBase1": {
+        "description": "Light version of basic font",
+        "extend": "textStyleBase",
+        "values": {
+          "fontWeight": "300"
+        }
+      },
+      "mixinBody": {
+        "values": {
+          "fontSize": "@textSizeBody"
+        }
+      },
+      "mixinPrimary": {
+        "values": {
+          "fontSize": "@textSizePrimary"
+        }
+      },
+      "mixinPrimary2": {
+        "values": {
+          "fontSize": "@textSizePrimary2"
+        }
+      },
+      "mixinPrimary3": {
+        "values": {
+          "fontSize": "@textSizePrimary3"
+        }
+      },
+      "mixinSecondary": {
+        "values": {
+          "fontSize": "@textSizeSecondary"
+        }
+      },
+      "textStylePrimary": {
+        "extend": [
+          "textStyleBase1",
+          "mixinPrimary"
+        ]
+      },
+      "textStylePrimary2": {
+        "extend": [
+          "textStyleBase1",
+          "mixinPrimary2"
+        ]
+      },
+      "textStyleSecondary": {
+        "extend": [
+          "textStyleBase0",
+          "mixinSecondary"
+        ]
+      },
+      "textStyleSecondary2": {
+        "extend": [
+          "textStyleBase1",
+          "mixinSecondary"
+        ]
+      },
+      "textStyleBody": {
+        "extend": [
+          "textStyleBase1",
+          "mixinBody"
+        ]
+      },
+      "textStyleSecondaryHint": {
+        "values": {
+          "fontFamily": "Bookerly",
+          "fontStyle": "italic",
+          "fontSize": "@textSizeSecondaryHint",
+          "color": "@colorTextPrimary"
+        }
+      }
+    },
+    "layouts": {
+      "Home": {
+        "items": [
+          {
+            "when": "${@viewportProfile == @hubRoundSmall}",
+            "type": "Container",
+            "direction": "column",
+            "width": "100vw",
+            "height": "100vh",
+            "items": [
+              {
+                "type": "Image",
+                "source": "${payload.musicManTemplateData.properties.GeneralSquareImageUrl}",
+                "scale": "best-fill",
+                "width": "100vw",
+                "height": "100vh",
+                "position": "absolute",
+                "overlayColor": "rgba(0, 0, 0, 0.6)"
+              },
+              {
+                "type": "AlexaHeader",
+                "headerAttributionImage": "${payload.musicManTemplateData.properties.LogoUrl}",
+                "headerTitle": "${payload.musicManTemplateData.title}"
+              },
+              {
+                "type": "Text",
+                "text": "<b>Welcome to the Music Man</b>",
+                "style": "textStyleBody",
+                "width": "90vw",
+                "paddingLeft": "10vw",
+                "textAlign": "center"
+              },
+              {
+                "type": "ScrollView",
+                "width": "100vw",
+                "height": "50vh",
+                "item": [
+                  {
+                    "type": "Container",
+                    "direction": "column",
+                    "alignItems": "center",
+                    "paddingLeft": 30,
+                    "paddingRight": 30,
+                    "paddingBottom": 200,
+                    "items": [
+                      {
+                        "type": "Text",
+                        "text": "Ask a question similar to one of these:",
+                        "paddingTop": 40,
+                        "style": "textStylePrimary",
+                        "width": "90vw",
+                        "textAlign": "center"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "Who's coming to Staples Center",
+                        "paddingTop": 40,
+                        "style": "textStylePrimary",
+                        "width": "90vw",
+                        "textAlign": "center"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "Where is Iron Maiden playing in July",
+                        "paddingTop": 40,
+                        "style": "textStylePrimary",
+                        "width": "90vw",
+                        "textAlign": "center"
+                      },
+                      {
+                        "type": "Image",
+                        "source": "${payload.musicManTemplateData.properties.SongkickLogoUrl}",
+                        "width": 120,
+                        "height": 100,
+                        "scale": "best-fit",
+                        "align": "center"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Container",
+            "width": "100vw",
+            "height": "100vh",
+            "items": [
+              {
+                "type": "Image",
+                "source": "${payload.musicManTemplateData.properties.BackgroundImageUrl}",
+                "scale": "best-fill",
+                "width": "100vw",
+                "height": "100vh",
+                "position": "absolute"
+              },
+              {
+                "type": "AlexaHeader",
+                "headerTitle": "${payload.musicManTemplateData.properties.Title}",
+                "headerAttributionImage": "${payload.musicManTemplateData.properties.LogoUrl}"
+              },
+              {
+                "type": "Container",
+                "direction": "row",
+                "paddingLeft": 30,
+                "paddingRight": 72,
+                "grow": 1,
+                "items": [
+                  {
+                    "type": "Image",
+                    "source": "${payload.musicManTemplateData.properties.GeneralSquareImageUrl}",
+                    "width": 340,
+                    "height": 360,
+                    "scale": "best-fit",
+                    "align": "center"
+                  },
+                  {
+                    "type": "Container",
+                    "direction": "column",
+                    "paddingLeft": 10,
+                    "paddingRight": 10,
+                    "grow": 1,
+                    "items": [
+                      {
+                        "type": "Text",
+                        "text": "<b>Welcome to the Music Man</b>",
+                        "style": "textStyleBody"
+                      },
+                      {
+                        "type": "ScrollView",
+                        "height": "50vh",
+                        "width": "100vh",
+                        "shrink": 1,
+                        "item": [
+                          {
+                            "type": "Container",
+                            "items": [
+                              {
+                                "type": "Text",
+                                "text": "Ask a question similar to one of these:",
+                                "paddingTop": 40,
+                                "style": "textStylePrimary"
+                              },
+                              {
+                                "type": "Text",
+                                "text": "Who's coming to Staples Center",
+                                "paddingTop": 20,
+                                "style": "textStylePrimary"
+                              },
+                              {
+                                "type": "Text",
+                                "text": "Where is Iron Maiden playing in July",
+                                "paddingTop": 20,
+                                "style": "textStylePrimary"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Container",
+                "direction": "row",
+                "paddingRight": 150,
+                "grow": 1,
+                "items": [
+                  {
+                    "type": "AlexaFooter",
+                    "footerHint": "${payload.musicManTemplateData.properties.HintString}"
+                  },
+                  {
+                    "type": "Image",
+                    "source": "${payload.musicManTemplateData.properties.SongkickLogoUrl}",
+                    "width": 120,
+                    "height": 100,
+                    "scale": "best-fit",
+                    "align": "center"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Events": {
+        "items": [
+          {
+            "when": "${@viewportProfile == @hubRoundSmall}",
+            "type": "Container",
+            "direction": "column",
+            "width": "100vw",
+            "height": "100vh",
+            "items": [
+              {
+                "type": "Image",
+                "source": "${payload.musicManTemplateData.properties.GeneralSquareImageUrl}",
+                "scale": "best-fill",
+                "width": "100vw",
+                "height": "100vh",
+                "position": "absolute",
+                "overlayColor": "rgba(0, 0, 0, 0.6)"
+              },
+              {
+                "type": "ScrollView",
+                "width": "100vw",
+                "height": "100vh",
+                "item": [
+                  {
+                    "type": "Container",
+                    "direction": "column",
+                    "alignItems": "center",
+                    "paddingLeft": 30,
+                    "paddingRight": 30,
+                    "paddingBottom": 200,
+                    "items": [
+                      {
+                        "type": "AlexaHeader",
+                        "headerAttributionImage": "${payload.musicManTemplateData.properties.LogoUrl}",
+                        "headerTitle": "${payload.musicManTemplateData.properties.Title}"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "<b>${payload.musicManTemplateData.properties.HeadingText}</b>",
+                        "style": "textStyleBody",
+                        "width": "80vw",
+                        "textAlign": "center"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[0]}",
+                        "paddingTop": 40,
+                        "style": "textStylePrimary",
+                        "width": "80vw",
+                        "textAlign": "center"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[1]}",
+                        "paddingTop": 40,
+                        "style": "textStylePrimary",
+                        "width": "80vw",
+                        "textAlign": "center"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[2]}",
+                        "paddingTop": 40,
+                        "style": "textStylePrimary",
+                        "width": "80vw",
+                        "textAlign": "center"
+                      },
+                      {
+                        "type": "Image",
+                        "source": "${payload.musicManTemplateData.properties.SongkickLogoUrl}",
+                        "width": 120,
+                        "height": 100,
+                        "scale": "best-fit",
+                        "align": "center"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "when": "${@viewportProfile == @hubLandscapeMedium}",
+            "type": "Container",
+            "width": "100vw",
+            "height": "100vh",
+            "items": [
+              {
+                "type": "Image",
+                "source": "${payload.musicManTemplateData.properties.BackgroundImageUrl}",
+                "scale": "best-fill",
+                "width": "100vw",
+                "height": "100vh",
+                "position": "absolute"
+              },
+              {
+                "type": "AlexaHeader",
+                "headerTitle": "${payload.musicManTemplateData.properties.Title}",
+                "headerAttributionImage": "${payload.musicManTemplateData.properties.LogoUrl}"
+              },
+              {
+                "type": "Container",
+                "direction": "row",
+                "paddingLeft": 40,
+                "paddingRight": 72,
+                "grow": 1,
+                "items": [
+                  {
+                    "type": "Container",
+                    "items": [
+                      {
+                        "when": "${payload.musicManTemplateData.properties.EventImageUrl != 'NA'}",
+                        "type": "Image",
+                        "source": "${payload.musicManTemplateData.properties.EventImageUrl}",
+                        "width": 340,
+                        "height": 360,
+                        "scale": "best-fit",
+                        "align": "top"
+                      },
+                      {
+                        "when": "${payload.musicManTemplateData.properties.EventImageUrl == 'NA'}",
+                        "type": "Image",
+                        "source": "${payload.musicManTemplateData.properties.GeneralSquareImageUrl}",
+                        "width": 340,
+                        "height": 360,
+                        "scale": "best-fit",
+                        "align": "top"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Container",
+                    "direction": "column",
+                    "paddingLeft": 15,
+                    "width": "63vw",
+                    "items": [
+                      {
+                        "type": "Text",
+                        "text": "<b>${payload.musicManTemplateData.properties.HeadingText}</b>",
+                        "style": "textStyleBody"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[0]}",
+                        "paddingTop": 20,
+                        "style": "textStylePrimary2"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[1]}",
+                        "paddingTop": 20,
+                        "style": "textStylePrimary2"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[2]}",
+                        "paddingTop": 20,
+                        "style": "textStylePrimary2"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Container",
+                "direction": "row",
+                "paddingRight": 150,
+                "grow": 1,
+                "items": [
+                  {
+                    "type": "AlexaFooter",
+                    "footerHint": "${payload.musicManTemplateData.properties.HintString}"
+                  },
+                  {
+                    "type": "Image",
+                    "source": "${payload.musicManTemplateData.properties.SongkickLogoUrl}",
+                    "width": 120,
+                    "height": 100,
+                    "scale": "best-fit",
+                    "align": "center"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "when": "${@viewportProfile == @hubLandscapeLarge}",
+            "type": "Container",
+            "width": "100vw",
+            "height": "100vh",
+            "items": [
+              {
+                "type": "Image",
+                "source": "${payload.musicManTemplateData.properties.BackgroundImageUrl}",
+                "scale": "best-fill",
+                "width": "100vw",
+                "height": "100vh",
+                "position": "absolute"
+              },
+              {
+                "type": "AlexaHeader",
+                "headerTitle": "${payload.musicManTemplateData.properties.Title}",
+                "headerAttributionImage": "${payload.musicManTemplateData.properties.LogoUrl}"
+              },
+              {
+                "type": "Container",
+                "direction": "row",
+                "paddingLeft": 40,
+                "paddingRight": 72,
+                "grow": 1,
+                "items": [
+                  {
+                    "type": "Container",
+                    "items": [
+                      {
+                        "when": "${payload.musicManTemplateData.properties.EventImageUrl != 'NA'}",
+                        "type": "Image",
+                        "source": "${payload.musicManTemplateData.properties.EventImageUrl}",
+                        "width": 340,
+                        "height": 360,
+                        "scale": "best-fit",
+                        "align": "top"
+                      },
+                      {
+                        "when": "${payload.musicManTemplateData.properties.EventImageUrl == 'NA'}",
+                        "type": "Image",
+                        "source": "${payload.musicManTemplateData.properties.GeneralSquareImageUrl}",
+                        "width": 340,
+                        "height": 360,
+                        "scale": "best-fit",
+                        "align": "top"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Container",
+                    "direction": "column",
+                    "paddingLeft": 15,
+                    "width": "63vw",
+                    "items": [
+                      {
+                        "type": "Text",
+                        "text": "<b>${payload.musicManTemplateData.properties.HeadingText}</b>",
+                        "style": "textStyleBody"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[0]}",
+                        "paddingTop": 20,
+                        "style": "textStylePrimary3"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[1]}",
+                        "paddingTop": 20,
+                        "style": "textStylePrimary3"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[2]}",
+                        "paddingTop": 20,
+                        "style": "textStylePrimary3"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Container",
+                "direction": "row",
+                "paddingRight": 150,
+                "grow": 1,
+                "items": [
+                  {
+                    "type": "AlexaFooter",
+                    "footerHint": "${payload.musicManTemplateData.properties.HintString}"
+                  },
+                  {
+                    "type": "Image",
+                    "source": "${payload.musicManTemplateData.properties.SongkickLogoUrl}",
+                    "width": 120,
+                    "height": 100,
+                    "scale": "best-fit",
+                    "align": "center"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "when": "${@viewportProfile == @tvLandscapeXLarge}",
+            "type": "Container",
+            "width": "100vw",
+            "height": "100vh",
+            "items": [
+              {
+                "type": "Image",
+                "source": "${payload.musicManTemplateData.properties.BackgroundImageUrl}",
+                "scale": "best-fill",
+                "width": "100vw",
+                "height": "100vh",
+                "position": "absolute"
+              },
+              {
+                "type": "AlexaHeader",
+                "headerTitle": "${payload.musicManTemplateData.properties.Title}",
+                "headerAttributionImage": "${payload.musicManTemplateData.properties.LogoUrl}"
+              },
+              {
+                "type": "Container",
+                "direction": "row",
+                "paddingLeft": 40,
+                "paddingRight": 72,
+                "grow": 1,
+                "items": [
+                  {
+                    "type": "Container",
+                    "items": [
+                      {
+                        "when": "${payload.musicManTemplateData.properties.EventImageUrl != 'NA'}",
+                        "type": "Image",
+                        "source": "${payload.musicManTemplateData.properties.EventImageUrl}",
+                        "width": 340,
+                        "height": 360,
+                        "scale": "best-fit",
+                        "align": "top"
+                      },
+                      {
+                        "when": "${payload.musicManTemplateData.properties.EventImageUrl == 'NA'}",
+                        "type": "Image",
+                        "source": "${payload.musicManTemplateData.properties.GeneralSquareImageUrl}",
+                        "width": 340,
+                        "height": 360,
+                        "scale": "best-fit",
+                        "align": "top"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Container",
+                    "direction": "column",
+                    "paddingLeft": 15,
+                    "width": "55vw",
+                    "items": [
+                      {
+                        "type": "Text",
+                        "text": "<b>${payload.musicManTemplateData.properties.HeadingText}</b>",
+                        "style": "textStylePrimary2"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[0]}",
+                        "paddingTop": 15,
+                        "style": "textStyleSecondary2"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[1]}",
+                        "paddingTop": 15,
+                        "style": "textStyleSecondary2"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[2]}",
+                        "paddingTop": 15,
+                        "style": "textStyleSecondary2"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Container",
+                "direction": "row",
+                "paddingRight": 150,
+                "grow": 1,
+                "items": [
+                  {
+                    "type": "AlexaFooter",
+                    "footerHint": "${payload.musicManTemplateData.properties.HintString}"
+                  },
+                  {
+                    "type": "Image",
+                    "source": "${payload.musicManTemplateData.properties.SongkickLogoUrl}",
+                    "width": 120,
+                    "height": 100,
+                    "scale": "best-fit",
+                    "align": "center"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Help": {
+        "items": [
+          {
+            "when": "${@viewportProfile == @hubRoundSmall}",
+            "type": "Container",
+            "direction": "column",
+            "width": "100vw",
+            "height": "100vh",
+            "items": [
+              {
+                "type": "Image",
+                "source": "${payload.musicManTemplateData.properties.GeneralSquareImageUrl}",
+                "scale": "best-fill",
+                "width": "100vw",
+                "height": "100vh",
+                "position": "absolute",
+                "overlayColor": "rgba(0, 0, 0, 0.6)"
+              },
+              {
+                "type": "ScrollView",
+                "width": "100vw",
+                "height": "100vh",
+                "item": [
+                  {
+                    "type": "Container",
+                    "direction": "column",
+                    "alignItems": "center",
+                    "paddingLeft": 30,
+                    "paddingRight": 30,
+                    "paddingBottom": 200,
+                    "items": [
+                      {
+                        "type": "AlexaHeader",
+                        "headerAttributionImage": "${payload.musicManTemplateData.properties.LogoUrl}",
+                        "headerTitle": "${payload.musicManTemplateData.properties.Title}"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "<b>${payload.musicManTemplateData.properties.HeadingText}</b>",
+                        "style": "textStyleBody",
+                        "width": "80vw",
+                        "textAlign": "center"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[0]}",
+                        "paddingTop": 40,
+                        "style": "textStylePrimary",
+                        "width": "80vw",
+                        "textAlign": "center"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[1]}",
+                        "paddingTop": 40,
+                        "style": "textStylePrimary",
+                        "width": "80vw",
+                        "textAlign": "center"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[2]}",
+                        "paddingTop": 40,
+                        "style": "textStylePrimary",
+                        "width": "80vw",
+                        "textAlign": "center"
+                      },
+                      {
+                        "type": "Image",
+                        "source": "${payload.musicManTemplateData.properties.SongkickLogoUrl}",
+                        "width": 120,
+                        "height": 100,
+                        "scale": "best-fit",
+                        "align": "center"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "when": "${@viewportProfile == @hubLandscapeMedium}",
+            "type": "Container",
+            "width": "100vw",
+            "height": "100vh",
+            "items": [
+              {
+                "type": "Image",
+                "source": "${payload.musicManTemplateData.properties.BackgroundImageUrl}",
+                "scale": "best-fill",
+                "width": "100vw",
+                "height": "100vh",
+                "position": "absolute"
+              },
+              {
+                "type": "AlexaHeader",
+                "headerTitle": "${payload.musicManTemplateData.properties.Title}",
+                "headerAttributionImage": "${payload.musicManTemplateData.properties.LogoUrl}"
+              },
+              {
+                "type": "Container",
+                "direction": "row",
+                "paddingLeft": 40,
+                "paddingRight": 72,
+                "grow": 1,
+                "items": [
+                  {
+                    "type": "Container",
+                    "items": [
+                      {
+                        "type": "Image",
+                        "source": "${payload.musicManTemplateData.properties.GeneralSquareImageUrl}",
+                        "width": 340,
+                        "height": 360,
+                        "scale": "best-fit",
+                        "align": "top"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Container",
+                    "direction": "column",
+                    "paddingLeft": 15,
+                    "width": "63vw",
+                    "items": [
+                      {
+                        "type": "Text",
+                        "text": "<b>${payload.musicManTemplateData.properties.HeadingText}</b>",
+                        "style": "textStyleBody"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[0]}",
+                        "paddingTop": 20,
+                        "style": "textStylePrimary2"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[1]}",
+                        "paddingTop": 20,
+                        "style": "textStylePrimary2"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[2]}",
+                        "paddingTop": 20,
+                        "style": "textStylePrimary2"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Container",
+                "direction": "row",
+                "paddingRight": 150,
+                "grow": 1,
+                "items": [
+                  {
+                    "type": "AlexaFooter",
+                    "footerHint": "${payload.musicManTemplateData.properties.HintString}"
+                  },
+                  {
+                    "type": "Image",
+                    "source": "${payload.musicManTemplateData.properties.SongkickLogoUrl}",
+                    "width": 120,
+                    "height": 100,
+                    "scale": "best-fit",
+                    "align": "center"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "when": "${@viewportProfile == @hubLandscapeLarge}",
+            "type": "Container",
+            "width": "100vw",
+            "height": "100vh",
+            "items": [
+              {
+                "type": "Image",
+                "source": "${payload.musicManTemplateData.properties.BackgroundImageUrl}",
+                "scale": "best-fill",
+                "width": "100vw",
+                "height": "100vh",
+                "position": "absolute"
+              },
+              {
+                "type": "AlexaHeader",
+                "headerTitle": "${payload.musicManTemplateData.properties.Title}",
+                "headerAttributionImage": "${payload.musicManTemplateData.properties.LogoUrl}"
+              },
+              {
+                "type": "Container",
+                "direction": "row",
+                "paddingLeft": 40,
+                "paddingRight": 72,
+                "grow": 1,
+                "items": [
+                  {
+                    "type": "Container",
+                    "items": [
+                      {
+                        "type": "Image",
+                        "source": "${payload.musicManTemplateData.properties.GeneralSquareImageUrl}",
+                        "width": 340,
+                        "height": 360,
+                        "scale": "best-fit",
+                        "align": "top"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Container",
+                    "direction": "column",
+                    "paddingLeft": 15,
+                    "width": "63vw",
+                    "items": [
+                      {
+                        "type": "Text",
+                        "text": "<b>${payload.musicManTemplateData.properties.HeadingText}</b>",
+                        "style": "textStyleBody"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[0]}",
+                        "paddingTop": 20,
+                        "style": "textStylePrimary3"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[1]}",
+                        "paddingTop": 20,
+                        "style": "textStylePrimary3"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[2]}",
+                        "paddingTop": 20,
+                        "style": "textStylePrimary3"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Container",
+                "direction": "row",
+                "paddingRight": 150,
+                "grow": 1,
+                "items": [
+                  {
+                    "type": "AlexaFooter",
+                    "footerHint": "${payload.musicManTemplateData.properties.HintString}"
+                  },
+                  {
+                    "type": "Image",
+                    "source": "${payload.musicManTemplateData.properties.SongkickLogoUrl}",
+                    "width": 120,
+                    "height": 100,
+                    "scale": "best-fit",
+                    "align": "center"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "when": "${@viewportProfile == @tvLandscapeXLarge}",
+            "type": "Container",
+            "width": "100vw",
+            "height": "100vh",
+            "items": [
+              {
+                "type": "Image",
+                "source": "${payload.musicManTemplateData.properties.BackgroundImageUrl}",
+                "scale": "best-fill",
+                "width": "100vw",
+                "height": "100vh",
+                "position": "absolute"
+              },
+              {
+                "type": "AlexaHeader",
+                "headerTitle": "${payload.musicManTemplateData.properties.Title}",
+                "headerAttributionImage": "${payload.musicManTemplateData.properties.LogoUrl}"
+              },
+              {
+                "type": "Container",
+                "direction": "row",
+                "paddingLeft": 40,
+                "paddingRight": 72,
+                "grow": 1,
+                "items": [
+                  {
+                    "type": "Container",
+                    "items": [
+                      {
+                        "type": "Image",
+                        "source": "${payload.musicManTemplateData.properties.GeneralSquareImageUrl}",
+                        "width": 340,
+                        "height": 360,
+                        "scale": "best-fit",
+                        "align": "top"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Container",
+                    "direction": "column",
+                    "paddingLeft": 15,
+                    "width": "55vw",
+                    "items": [
+                      {
+                        "type": "Text",
+                        "text": "<b>${payload.musicManTemplateData.properties.HeadingText}</b>",
+                        "style": "textStylePrimary2"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[0]}",
+                        "paddingTop": 15,
+                        "style": "textStyleSecondary2"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[1]}",
+                        "paddingTop": 15,
+                        "style": "textStyleSecondary2"
+                      },
+                      {
+                        "type": "Text",
+                        "text": "${payload.musicManTemplateData.properties.EventText[2]}",
+                        "paddingTop": 15,
+                        "style": "textStyleSecondary2"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Container",
+                "direction": "row",
+                "paddingRight": 150,
+                "grow": 1,
+                "items": [
+                  {
+                    "type": "AlexaFooter",
+                    "footerHint": "${payload.musicManTemplateData.properties.HintString}"
+                  },
+                  {
+                    "type": "Image",
+                    "source": "${payload.musicManTemplateData.properties.SongkickLogoUrl}",
+                    "width": 120,
+                    "height": 100,
+                    "scale": "best-fit",
+                    "align": "center"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "mainTemplate": {
+      "parameters": [
+        "payload"
+      ],
+      "items": [
+        {
+          "when": "${payload.musicManTemplateData.properties.LayoutToUse == 'Home'}",
+          "type": "Home"
+        },
+        {
+          "when": "${payload.musicManTemplateData.properties.LayoutToUse == 'Events'}",
+          "type": "Events"
+        },
+        {
+          "when": "${payload.musicManTemplateData.properties.LayoutToUse == 'Help'}",
+          "type": "Help"
+        }
+      ]
+    }
+  },
+  "dataSources": {
+    "musicManTemplateData": {
+      "type": "object",
+      "objectId": "musicManSample",
+      "properties": {
+        "Title": "The Music Man",
+        "LayoutToUse": "Help",
+        "HeadingText": "Here is where Iron Maiden is playing in July",
+        "EventImageUrl": "NA",
+        "HintString": "Where is Iron Maiden playing in July",
+        "BackgroundImageUrl": "https://s3.amazonaws.com/content.musicman/images/vishnu-r-nair-639172-unsplash.png",
+        "LogoUrl": "https://s3.amazonaws.com/content.musicman/images/MusicManIcon.png",
+        "GeneralSquareImageUrl": "https://s3.amazonaws.com/content.musicman/images/Songkick340.png",
+        "SongkickLogoUrl": "https://s3.amazonaws.com/content.musicman/images/SongkickConcerts.png",
+        "EventText": [
+          "test1",
+          "test2",
+          "test3"
+        ]
+      },
+      "transformers": [
+        {
+          "inputPath": "HintString",
+          "transformer": "textToHint"
+        }
+      ]
+    }
+  }
+}

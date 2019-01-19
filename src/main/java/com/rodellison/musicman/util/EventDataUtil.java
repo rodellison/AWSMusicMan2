@@ -1,19 +1,37 @@
 package com.rodellison.musicman.util;
 
 import com.amazon.ask.dispatcher.request.handler.HandlerInput;
+import com.amazon.ask.exception.AskSdkException;
 import com.amazon.ask.model.Response;
+import com.amazon.ask.model.interfaces.alexa.presentation.apl.RenderDocumentDirective;
+import com.amazon.ask.model.ui.Image;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+
+import static com.rodellison.musicman.util.TemplatesUtil.supportsApl;
 
 public class EventDataUtil {
 
+    private static String CLASS_NAME = "EventDataUtil";
     private static final Logger log = LogManager.getLogger(EventDataUtil.class);
     private static final int PAGINATION_SIZE = 3;
+    private static final String SongkickArtistImageURL = "https://images.sk-static.com/images/media/profile_images/artists/ARTISTID/huge_avatar";
+    private static Image myStandardCardImage;
+    private static PropertiesUtil myProps = new PropertiesUtil(CLASS_NAME);
+
 
     public static Optional<Response> ProcessEventData (HandlerInput input, int sessionIndex, String currentSpeechText,
                                                        String currentPrimaryText, ArrayList<String> events,
-                                                       String IntentName, String strArtistVenueValue, String strMonthValue){
+                                                       String IntentName, String strArtistVenueValue, String strMonthValue, String ArtistID){
 
         log.warn("Process event data into Speech and Cards");
         Map<String, Object> attributes = input.getAttributesManager().getSessionAttributes();
@@ -22,11 +40,12 @@ public class EventDataUtil {
         speechOutputBuilder.append(currentSpeechText);
         StringBuilder cardOutputBuilder = new StringBuilder();
         int currentIndex = sessionIndex;
-        String speechText, repromptSpeechText1, primaryTextDisplay, secondaryTextDisplay = "";
+        String speechText, repromptSpeechText, primaryTextDisplay, secondaryTextDisplay = "";
 
         currentIndex = sessionIndex;
         primaryTextDisplay = currentPrimaryText;
 
+        List<String> textEvents = new ArrayList<String>();
 
         for (int i = 0; i < PAGINATION_SIZE; i++) {
             try {
@@ -35,9 +54,10 @@ public class EventDataUtil {
                     speechOutputBuilder.append(events.get(currentIndex));
                     speechOutputBuilder.append("</s>");
 
-                    cardOutputBuilder.append("<br/>");
+                    textEvents.add(events.get(currentIndex));
                     cardOutputBuilder.append(events.get(currentIndex));
-                    cardOutputBuilder.append("<br/>");
+                    cardOutputBuilder.append("\n");
+
                     currentIndex++;
 
                 }
@@ -47,11 +67,18 @@ public class EventDataUtil {
             }
         }
 
+        //This is just to make sure that theres always 3 entries to display in the APL fields
+        for (int i = textEvents.size(); i<=3; i++)
+        {
+            textEvents.add(" ");
+        }
+
+
         log.info("Process event data 2 for reprompt queue");
 
         if (events.size() > currentIndex) {
             speechOutputBuilder.append(" Would you like to hear more?");
-            repromptSpeechText1 = " Would you like to hear more?";
+            repromptSpeechText = " Would you like to hear more?";
             // If there are more than 3 events, set the count to the currentIndex and add the events
             // to the session attributes
         } else {
@@ -60,7 +87,7 @@ public class EventDataUtil {
             else
                 speechOutputBuilder.append("<p>There are no additional events.</p> You can say 'Start over' to try a new request, or 'I'm done', to exit.");
 
-            repromptSpeechText1 = "<p>There are no additional events.</p> You can say 'Start over' to try a new request, or 'I'm done', to exit.";
+            repromptSpeechText = "<p>There are no additional events.</p> You can say 'Start over' to try a new request, or 'I'm done', to exit.";
         }
 
         attributes.put("SESSION_INDEX", currentIndex);
@@ -68,6 +95,7 @@ public class EventDataUtil {
         attributes.put("LAST_SESSION_INTENT", IntentName);
         attributes.put("ARTIST_VENUE_VALUE", strArtistVenueValue);
         attributes.put("MONTH_VALUE", strMonthValue);
+        attributes.put("ARTIST_ID", ArtistID);
 
         log.info("Process event data 3 final construct for TemplateUtil");
 
@@ -82,14 +110,80 @@ public class EventDataUtil {
         secondaryTextDisplay = secondaryTextDisplay.replace(")", "");
         secondaryTextDisplay = secondaryTextDisplay.replace("&", " and ");
 
-        log.info("speechText: " + speechText);
-        log.info("repromptSpeechText1: " + repromptSpeechText1);
-        log.info("primaryTextDisplay: " + primaryTextDisplay);
-        log.info("secondaryTextDisplay: " + secondaryTextDisplay);
 
-        return TemplatesUtil.createResponse(input, speechText,
-                repromptSpeechText1,
-                primaryTextDisplay, secondaryTextDisplay, IntentName, true);
+        if (supportsApl(input)) {
+            //  ViewportProfile viewportProfile = ViewportUtils.getViewportProfile(input.getRequestEnvelope());
+
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode node = mapper.readTree(new File("MusicManDocData.json"));
+                JsonNode documentNode = node.get("document");
+                JsonNode dataSourcesNode = node.get("dataSources");
+
+                TypeReference<HashMap<String, Object>> MusicManMapType = new TypeReference<HashMap<String, Object>>() {};
+
+                log.info("LaunchRequestHandler called, reading documentNode value");
+                Map<String, Object> document = mapper.readValue(documentNode.toString(), MusicManMapType);
+
+                log.info("LaunchRequestHandler called, reading dataSources node");
+                JsonNode dataSources = mapper.readTree(dataSourcesNode.toString());
+
+                log.info("LaunchRequestHandler called, getting properties node");
+                ObjectNode MusicManTemplateProperties = (ObjectNode) dataSources.get("musicManTemplateData").get("properties");
+
+                log.info("LaunchRequestHandler called, setting properties");
+
+                MusicManTemplateProperties.put("LayoutToUse", "Events");
+                MusicManTemplateProperties.put("HeadingText", primaryTextDisplay);
+
+                //This URL only exists at Songkick for Artists,.. not venues
+                if (IntentName.contains("Artist")) {
+                    String SongkickArtistImageURLUpdated = SongkickArtistImageURL.replace("ARTISTID", ArtistID);
+                    MusicManTemplateProperties.put("EventImageUrl", SongkickArtistImageURLUpdated);
+                }
+                else
+                    MusicManTemplateProperties.put("EventImageUrl", "NA");
+
+                MusicManTemplateProperties.put("HintString", "Who is coming to the Mohawk");
+
+                ObjectMapper textEventMapper = new ObjectMapper();
+                ArrayNode theArray = mapper.valueToTree(textEvents);
+                MusicManTemplateProperties.putArray("EventText").addAll(theArray);
+
+                log.info("LaunchRequestHandler called, building Render Document");
+
+                RenderDocumentDirective documentDirective = RenderDocumentDirective.builder()
+                        .withDocument(document)
+                        .withDatasources(mapper.convertValue(dataSources, new TypeReference<Map<String, Object>>() {
+                        }))
+                        .build();
+
+                log.info(documentDirective);
+
+                log.info("LaunchRequestHandler called, calling responseBuilder");
+
+                return input.getResponseBuilder()
+                        .withSpeech(speechText)
+                        .withReprompt(repromptSpeechText)
+                        .addDirective(documentDirective)
+                        .build();
+
+            } catch (IOException e) {
+                throw new AskSdkException("Unable to read or deserialize device data", e);
+            }
+        } else {
+
+            myStandardCardImage = Image.builder()
+                    .withLargeImageUrl(myProps.getPropertyValue("SmallImageUrl"))
+                    .withSmallImageUrl(myProps.getPropertyValue("LargeImageUrl"))
+                    .build();
+
+            return input.getResponseBuilder()
+                    .withSpeech(speechText)
+                    .withReprompt(repromptSpeechText)
+                    .withStandardCard(myProps.getPropertyValue("AppTitle"), TemplatesUtil.prepForSimpleStandardCardText(speechText), myStandardCardImage)
+                    .build();
+        }
 
     }
 
@@ -104,42 +198,37 @@ public class EventDataUtil {
         String repromptSpeechText2 = "Who's coming to Staples Center, or Where is Iron Maiden playing?";
         String repromptSpeechText3 = "You can also say 'Start over' to begin a new request, or say 'I'm done', to exit.";
 
-        String primaryTextDisplay = "<b>The Music Man Help</b>.<br/>";
-        String secondaryTextDisplay = repromptSpeechText1 + "<br/><br/>" + repromptSpeechText2 + "<br/><br/>" + repromptSpeechText3;
-
-        return TemplatesUtil.createResponse(input, speechText,
-                repromptSpeechText1 + repromptSpeechText2 + repromptSpeechText3,
-                primaryTextDisplay, secondaryTextDisplay, strIntentName, false);
+        return input.getResponseBuilder()
+                .withSpeech(speechText)
+                .withReprompt(repromptSpeechText1 + repromptSpeechText2 + repromptSpeechText3)
+                .build();
     }
 
     public static Optional<Response> returnNoEventDataFound(HandlerInput input, String strIntentName, String strArtistVenueValue, String strMonthValue)
     {
         String speechText = "";
-        String primaryTextDisplay = "";
 
         if (strIntentName == "ArtistIntent")
         {
              speechText = strMonthValue != "" ? String.format("<p>I couldn't find any events where %s is playing in %s.</p>", strArtistVenueValue, strMonthValue) :
                     String.format("<p>I couldn't find any events where %s is playing.</p>", strArtistVenueValue);
-             primaryTextDisplay = strMonthValue != "" ? String.format("<br/>The Music Man couldn't find any upcoming events for <b> %s </b> in <b> %s </b>", strArtistVenueValue, strMonthValue) :
-                    String.format("<br/>The Music Man couldn't find any upcoming events for <b> %s </b>", strArtistVenueValue);
 
         }
         else
         {
             speechText = strMonthValue != "" ? String.format("<p>I couldn't find any events coming to %s in %s.</p>", strArtistVenueValue, strMonthValue) :
                     String.format("<p>I couldn't find any events coming to %s.</p>", strArtistVenueValue);
-            primaryTextDisplay = strMonthValue != "" ? String.format("<br/>The Music Man couldn't find any upcoming events at <b> %s </b> in <b> %s </b>", strArtistVenueValue, strMonthValue) :
-                    String.format("<br/>The Music Man couldn't find any upcoming events at <b> %s </b>", strArtistVenueValue);
 
         }
         speechText += "If you'd like to try another search, say 'Start over', or say I'm done, to exit.";
         String repromptSpeechText1 = "<p>You can say 'Start over' to begin a new request, or say I'm done, to exit.</p>";
-        String secondaryTextDisplay = "<br/><br/>";
 
         log.warn("Responding with No events found, possibly unrecognized Artist data...");
-        return TemplatesUtil.createResponse(input, speechText, repromptSpeechText1 ,
-                primaryTextDisplay, secondaryTextDisplay, strIntentName, true);
+
+        return input.getResponseBuilder()
+                .withSpeech(speechText)
+                .withReprompt(repromptSpeechText1 )
+                .build();
     }
 
     public static String cleanupKnownUserError(String theValue)
@@ -166,5 +255,26 @@ public class EventDataUtil {
         return cleanedUpValue;
 
     }
+
+    public static String toTitleCase(String givenString) {
+
+        if (givenString.trim() == "")
+            return "";
+
+        String tempString = givenString;
+
+        String[] arr = tempString.split(" ", 0);
+        StringBuffer sb = new StringBuffer();
+
+        for (int i = 0; i < arr.length; i++) {
+                sb.append(Character.toUpperCase(arr[i].charAt(0)))
+                        .append(arr[i].substring(1)).append(" ");
+        }
+
+        return sb.toString().trim();
+    }
+
+
+
 
 }

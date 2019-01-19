@@ -27,7 +27,7 @@ public class VenueIntentHandler implements RequestHandler {
     private static final String INTENT_NAME = "VenueIntent";
     private static final String VENUE_SLOT = "venue";
     private static final String MONTH_SLOT = "month";
-    private String strOriginalVenueValue = "";
+    private String strTheVenue;
 
     @Override
     public boolean canHandle(HandlerInput input) {
@@ -49,15 +49,13 @@ public class VenueIntentHandler implements RequestHandler {
 
         String speechText,
                 primaryTextDisplay,
-                strTheVenue, strTheMonth = "";
-
+                strTheMonth = "";
 
         try {
             myVenueSlot = slots.get(VENUE_SLOT);
             myMonthSlot = slots.get(MONTH_SLOT);
 
-            strOriginalVenueValue = myVenueSlot.getValue();
-            strTheVenue = strOriginalVenueValue.toLowerCase();
+            strTheVenue = myVenueSlot.getValue().toLowerCase();
             strTheMonth = myMonthSlot.getValue();  //this can be, and may usually be null..
 
             if (strTheMonth == null)
@@ -82,21 +80,25 @@ public class VenueIntentHandler implements RequestHandler {
         log.info("Process Venue event data into Speech and Cards");
         int currentIndex = 0;
 
+        strTheVenue = EventDataUtil.toTitleCase(strTheVenue);
+        strTheMonth = EventDataUtil.toTitleCase(strTheMonth);
+
+
         //There may not be any events, or the Songkick service may not recognize the value
         //If that's the case, then provide a response to user, and ask them to start a new request
         if (null == events || events.isEmpty()) {
             //Only send an SNS if events was null.. events won't be null if there WERE events, but just not for the requested month, etc.
             if (events == null)
-                SNSMessageUtil.SendSMSMessage(INTENT_NAME, "Venue: " + strOriginalVenueValue + ", Month: " + strTheMonth);
-            return EventDataUtil.returnNoEventDataFound(input, INTENT_NAME, strOriginalVenueValue, strTheMonth);
+                SNSMessageUtil.SendSMSMessage(INTENT_NAME, "Venue: " + strTheVenue + ", Month: " + strTheMonth);
+            return EventDataUtil.returnNoEventDataFound(input, INTENT_NAME, strTheVenue, strTheMonth);
         }
 
-        speechText = strTheMonth != "" ? String.format("<p>Here are upcoming events at %s in %s.</p>", strOriginalVenueValue, strTheMonth) :
-                String.format("<p>Here are upcoming events at " + strOriginalVenueValue + "</p>");
-        primaryTextDisplay = strTheMonth != "" ? String.format("Upcoming dates at <b>%s</b> in <b>%s</b>:<br/><br/>", strOriginalVenueValue, strTheMonth) :
-                String.format("Upcoming dates at <b>%s</b>:<br/>", strOriginalVenueValue);
+        speechText = strTheMonth != "" ? String.format("<p>Here are upcoming events at %s in %s.</p>", strTheVenue, strTheMonth) :
+                String.format("<p>Here are upcoming events at " + strTheVenue + "</p>");
+        primaryTextDisplay = strTheMonth != "" ? String.format("Upcoming events at %s in %s:", strTheVenue, strTheMonth) :
+                String.format("Upcoming events at %s:", strTheVenue);
 
-        return EventDataUtil.ProcessEventData(input, 0, speechText, primaryTextDisplay, events, INTENT_NAME, strTheVenue, strTheMonth);
+        return EventDataUtil.ProcessEventData(input, 0, speechText, primaryTextDisplay, events, INTENT_NAME, strTheVenue, strTheMonth, "");
 
     }
 
@@ -108,7 +110,7 @@ public class VenueIntentHandler implements RequestHandler {
      */
     protected ArrayList<String> getVenueDates(String strVenueValue, String strMonthValue) {
 
-        String strTheVenue, strVenueURLRequest, strVenueCalendarURLRequest;
+        String strVenueURLRequest, strVenueCalendarURLRequest;
 
         //Some venue names and utterences can be misunderstood
         //a list of common failed items, and sometimes when the user inadvertantly includes things like 'tonight, next week, etc.'
@@ -118,10 +120,6 @@ public class VenueIntentHandler implements RequestHandler {
         //Update the value used in the speech with any corrections that may have been made
         log.info("Begin query the MusicManParmTable for the ArtistVenue Value");
         strTheVenue = DynamoDataUtil.queryMusicManParmTable(strTheVenue);
-        //Quick check here to see if a swap value was present. If it was, then change our original value so that it
-        //will appear corrected in display cards.
-        if (strTheVenue.toLowerCase() != strOriginalVenueValue.toLowerCase())
-            strOriginalVenueValue = strTheVenue;
         log.info("End query the MusicManParmTable");
 
         String strURLEncodedParm = "";

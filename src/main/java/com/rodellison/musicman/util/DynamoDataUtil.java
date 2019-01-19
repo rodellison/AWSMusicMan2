@@ -13,11 +13,7 @@ public class DynamoDataUtil {
 
     private static final String CLASS_NAME = "DynamoDataUtil";
     private static final Logger log = LogManager.getLogger(DynamoDataUtil.class);
-    private static PropertiesUtil myProps;
-
-    static {
-        myProps = new PropertiesUtil(CLASS_NAME);
-    }
+    private static PropertiesUtil myProps = new PropertiesUtil(CLASS_NAME);
 
     /**
      * queryMusicManParmTable is used to interface with a dynamoDB table for the purposes of locating a corrected text value of something
@@ -56,7 +52,7 @@ public class DynamoDataUtil {
                 log.warn("Found an item to swap: " + theReturnedValue);
                 strTextValue =  theReturnedValue;
             } else {
-                log.warn("Did not find a value to swap for " + strTextValue);
+                log.info("Did not find a value to swap for " + strTextValue);
             }
 
             dynamoDB.shutdown();
