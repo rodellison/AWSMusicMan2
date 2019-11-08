@@ -8,47 +8,52 @@
 
     <packaging>jar</packaging>
     <name>AWSMusicMan2</name>
-    <description>The Music Man Alexa Skill </description>
+    <description>The Music Man Alexa Skill</description>
+
+    <properties>
+        <ask-sdk-version>[2.9.10,)</ask-sdk-version>
+        <aws-sns-version>[1.11.475,)</aws-sns-version>
+        <log4j-version>[2.12,)</log4j-version>
+        <jackson-version>[2.9.10.1,)</jackson-version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.amazon.alexa</groupId>
             <artifactId>ask-sdk</artifactId>
-            <version>2.9.0</version>
+            <version>${ask-sdk-version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-sns -->
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-sns</artifactId>
-            <version>1.11.475</version>
+            <version>${aws-sns-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.8.2</version>
+            <version>${log4j-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.8.2</version>
-            </dependency>
+            <version>${log4j-version}</version>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.9.4</version>
+            <version>${jackson-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.4</version>
+            <version>${jackson-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-cbor</artifactId>
-            <version>2.9.4</version>
+            <version>${jackson-version}</version>
         </dependency>
-
-
     </dependencies>
 
     <build>
