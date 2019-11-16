@@ -33,7 +33,7 @@ public class CancelandStopIntentHandler implements RequestHandler {
 
         return input.getResponseBuilder()
                 .withSpeech(speechText)
-                 .build();
-
+                .withShouldEndSession(true)
+                .build();
     }
 }
