@@ -14,7 +14,7 @@
         <ask-sdk-version>[2.9.10,)</ask-sdk-version>
         <aws-sns-version>[1.11.475,)</aws-sns-version>
         <apache-http-version>[4.5.9,)</apache-http-version>
-        <log4j-version>2.13.3</log4j-version>   <!-- This version is needed, unless switching to lambdalogger -->
+        <log4j-version>2.15.0</log4j-version>   <!-- This version is needed, unless switching to lambdalogger -->
         <jackson-version>[2.9.10.1,)</jackson-version>
     </properties>
 
